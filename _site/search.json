@@ -411,5 +411,12 @@
     "title": "intro",
     "section": "Kable",
     "text": "Kable\n\n\nCode\nlibrary(kableExtra)\nevents_long %&gt;%\n  group_by(trait, value) %&gt;% \n  dplyr::summarize(N = n()) %&gt;%\n  ungroup() %&gt;%\n  pivot_wider(names_from = value, values_from = N, names_prefix = \"T\") %&gt;% \n  mutate('No Event' = T0) %&gt;% \n  mutate(Event = T1) %&gt;% \n  select(-c(T0, T1)) %&gt;% \n  kbl(booktabs = T) %&gt;% kable_styling(latex_options = \"striped\")\n\n\n\n\n\ntrait\nNo Event\nEvent\n\n\n\n\nChldBrth\n1600\n735\n\n\nChldMvOut\n1555\n830\n\n\nDadDied\n953\n213\n\n\nDivorce\n414\n122\n\n\nMarried\n1646\n331\n\n\nMomDied\n929\n219\n\n\nMoveIn\n1403\n419\n\n\nNewPart\n1207\n420\n\n\nPartDied\n402\n76\n\n\nSepPart\n1172\n415"
+  },
+  {
+    "objectID": "lectures.html",
+    "href": "lectures.html",
+    "title": "Lectures",
+    "section": "",
+    "text": "Motivation and handling data\nLongitudinal MLM\nLongitudinal SEM\nLines that Bend\nPredictors\nMultivarite"
   }
 ]
