@@ -1,0 +1,9 @@
+---
+title: "Applied Longitudinal Data Analyses"
+---
+
+
+
+1/17: Welcome to the first day of class! If you want to follow along with examples, head over to github for all of the code and data. https://github.com/josh-jackson/alda24
+
+Please check the homepage regularly for class updates and announcements.
