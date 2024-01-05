@@ -31,7 +31,7 @@ library(rmarkdown)
 ::: {.column width="35%"}
 1.  lines/ trajectories
 
-2.  variance decomposition
+2.  variance decomposition (more on this later)
 :::
 
 ::: {.column width="65%"}
@@ -60,7 +60,7 @@ ggplot(simp, aes(x=time, y=Y)) +
 
 ## How do we define "change"?
 
--   Types of change (most common):
+Types of change (most common):
 
 -   Differential / rank order consistency/rank order stability (correlations)
 
@@ -78,7 +78,7 @@ No rank order, mean level increase
 :::
 :::
 
-```{r,message = FALSE, warning = FALSE}
+```{r,echo = FALSE}
 library(tidyverse)
 
  ro.ml <- ggplot(simp, aes(x=time, y=Y)) +
@@ -129,6 +129,7 @@ ro.ml + noro.ml
 ### Data
 
 ```{r, message=FALSE, warning = FALSE}
+#| code-fold: true
 example <- read_csv("https://raw.githubusercontent.com/josh-jackson/longitudinal-2021/master/example.csv")
 example$year <- example$week
 example 
@@ -137,6 +138,7 @@ example
 ### Plot
 
 ```{r, echo = TRUE}
+#| code-fold: true
 ggplot(example,
    aes(x = year, y = SMN7, group = ID)) + geom_point()  
 
@@ -146,6 +148,7 @@ ggplot(example,
 ------------------------------------------------------------------------
 
 ```{r, echo = TRUE}
+#| code-fold: true
 ggplot(example,
    aes(x = year, y = SMN7, group = ID, colour = ID)) + geom_line(alpha = .4) +scale_color_viridis(   ) 
 ```
@@ -153,6 +156,7 @@ ggplot(example,
 ## Individual level
 
 ```{r, echo = TRUE, warning = FALSE, message=FALSE}
+#| code-fold: true
 ggplot(example, aes(x = year, y = SMN7, group = ID)) + geom_line() +  geom_point() + facet_wrap( ~ ID)
 
 ```
@@ -172,7 +176,7 @@ We will address different shapes later in the semester. Right now we are just wo
 
 -   What is the process that is changing someone? Age? Time in study? Year? Wave?
 
--   Is it a naturally occurring developmental process? Then maybe age is the best metric. What about tracking child's cognitive ability, something that might be influenced by level of schooling? Here grade may be more important than age. If you are running an intervention you may want to put everyone on the same starting metric and then control for nuisance variables like age or schooling level.
+-   Is it a naturally occurring developmental process? Then maybe age is the best metric. What about tracking child's cognitive ability, something that might be influenced by level of schooling? Grade may be more important. If you are running an intervention you may want to put everyone on the same starting metric and then control for nuisance variables like age or schooling level.
 
 ## Temporal design
 
@@ -190,7 +194,8 @@ We will address different shapes later in the semester. Right now we are just wo
 
 Before we get too fancy, lets just run some regressions.
 
-```{r, warning=FALSE}
+```{r}
+#| code-fold: true
 set.seed(11)
 ex.random <- example %>% 
   dplyr::select(ID) %>% 
@@ -392,7 +397,7 @@ summary(M4)
 
 ## LINES LINES LINES
 
--     Almost all of the questions we have can be simplified down to fitting a line per person.  
+-   Almost all of the questions we have can be simplified down to fitting a line per person.  
 -   Person level trajectories index change for a person
 -   Average person trajectory is the average trajectory
 -   Differences among the trajectories reflect individual differences in change
@@ -444,7 +449,7 @@ example3 <-
   left_join(ob.var, example)  
   
 p1 <- ggplot(example3,
-   aes(x = week, y = SMN7, group = ID)) +  geom_point() + stat_smooth(method="lm", se = FALSE) + facet_wrap( ~ID)
+   aes(x = week, y = SMN7, group = ID)) +  geom_point() + stat_smooth(method="lm", se = FALSE) + facet_wrap( ~ID) + xlab("year")
 
 p2 <- ggplot(example3,
    aes(x = week, y = SMN7, group = ID)) +  geom_point() + stat_smooth(method="loess", se = FALSE) + facet_wrap( ~ID)
@@ -733,11 +738,11 @@ library(tidyverse)
 
 ## Codebook
 
-The second step is a codebook. Arguably, this is the first step because you should *create* the codebook long before you open `R` and load your data.
+Arguably, this is the first step because you should *create* the codebook long before you open `R`.
 
-Why a codebook? Well, because you typically have a lot of variables and you will not be able to remember all the details that go into each one of them (rating scale, what the actual item was, was it coded someway, etc). This is especially true now that data are being collected online, which often provides placeholder variable names.
+Why a codebook? Because you  have a lot of variables and you will not be able to remember all the details that go into each one of them. 
 
-This codebook will serve as a means to document RAW code. It will also allow us to automate some tasks that are somewhat cumbersome, facilitate open data practices, and efficiently see what variables are available. 
+This codebook will serve as a means to document RAW code. It will also allow us to automate some tasks that are somewhat cumbersome and facilitate open data practices. 
 
 ---
 
@@ -745,9 +750,11 @@ To illustrate, we are going to using some data from the German Socioeconomic Pan
 
 ---
 
-For this tutorial, I created the codebook for you, and included what I believe are the core columns you may need. Some of these columns will not be particularly helpful for this dataset. For example, many of you likely work with datasets that have only a single file while others work with datasets spread across many files (e.g., different waves, different sources). As a result, the "dataset" column of the codebook may only have a single value whereas for others it may have multiple.
+I created the codebook for you, and included what I believe are the core columns you may need. 
 
-Here are my core columns that are based on the original data
+https://raw.githubusercontent.com/josh-jackson/alda24/main/codebook.csv
+
+Some of these columns will not be particularly helpful for this dataset. For example, many of you likely work with datasets that have only a single file while others work with datasets spread across many files (e.g., different waves, different sources). 
 
 ---
 
@@ -775,7 +782,7 @@ Here are additional columns that will make our lives easier or are applicable to
 
 9.  **category** broad categories that different variables can be put into. I'm a fan of naming them things like "outcome", "predictor", "moderator", "demographic", "procedural", etc. but sometimes use more descriptive labels like "Big 5" to indicate the model from which the measures are derived.
 
-10. **label** label is basically one level lower than category. So if the category is Big 5, the label would be, or example, "A" for Agreeableness, "SWB" for subjective well-being, etc. This column is most important and useful when you have multiple items in a scales, so I'll typically leave this blank when something is a standalone variable (e.g. sex, single-item scales, etc.).
+10. **label** label is basically one level lower than category. So if the category is Big 5, the label would be, or example, "A" for Agreeableness. This column is most important and useful when you have multiple items in a scales.
 
 -------
 
@@ -801,7 +808,7 @@ Below, I'll load in the codebook we will use for this study, which will include 
 ```{r, echo = TRUE}
 #| code-fold: true
 
-codebook <- read.csv("https://raw.githubusercontent.com/josh-jackson/longitudinal-2021/master/codebook.csv")
+codebook <- read.csv("https://raw.githubusercontent.com/josh-jackson/alda24/main/codebook.csv")
 
 codebook <- codebook %>% 
     mutate(old_name = str_to_lower(old_name)) # converts to lower case
@@ -1131,7 +1138,7 @@ events_long %>%
 
 To run the correlations, we will need to have our data in wide format
 
-```{r, echo = TRUE}
+```{r}
 #| code-fold: true
 b5_soep_long %>%
   unite(tmp, trait, year, sep = "_") %>%
@@ -1139,4 +1146,30 @@ b5_soep_long %>%
   select(-Procedural__SID) %>%
   cor(., use = "pairwise") %>%
   round(., 2)
+
+result <- correlation(iris)
 ```
+
+
+--------
+
+```{r}
+#| code-fold: true
+corrs <- b5_soep_long %>%
+  unite(tmp, trait, year, sep = "_") %>%
+  pivot_wider(names_from = tmp, values_from = value) %>% 
+  select(-Procedural__SID) %>%
+  correlation() # from easystat correlation package
+corrs
+```
+
+
+----------
+
+```{r}
+plot(summary(corrs))
+```
+
+
+-----
+

@@ -39,14 +39,14 @@
     "href": "intro-1.html#how-to-think-longitudinal-y",
     "title": "intro",
     "section": "how to think longitudinal-y",
-    "text": "how to think longitudinal-y\n\n\n\nlines/ trajectories\nvariance decomposition"
+    "text": "how to think longitudinal-y\n\n\n\nlines/ trajectories\nvariance decomposition (more on this later)"
   },
   {
     "objectID": "intro-1.html#how-do-we-define-change",
     "href": "intro-1.html#how-do-we-define-change",
     "title": "intro",
     "section": "How do we define “change”?",
-    "text": "How do we define “change”?\n\nTypes of change (most common):\nDifferential / rank order consistency/rank order stability (correlations)\nMean level/ absolute change (mean differences)"
+    "text": "How do we define “change”?\nTypes of change (most common):\n\nDifferential / rank order consistency/rank order stability (correlations)\nMean level/ absolute change (mean differences)"
   },
   {
     "objectID": "intro-1.html#how-do-we-define-change-1",
@@ -67,14 +67,14 @@
     "href": "intro-1.html#example",
     "title": "intro",
     "section": "Example",
-    "text": "Example\n\nDataPlot\n\n\n\nexample &lt;- read_csv(\"https://raw.githubusercontent.com/josh-jackson/longitudinal-2021/master/example.csv\")\nexample$year &lt;- example$week\nexample \n\n# A tibble: 225 × 51\n      ID group  time    CON CON_SAL CON_SMN7   DAN DAN_CON DAN_SAL DAN_SMN7\n   &lt;dbl&gt; &lt;chr&gt; &lt;dbl&gt;  &lt;dbl&gt;   &lt;dbl&gt;    &lt;dbl&gt; &lt;dbl&gt;   &lt;dbl&gt;   &lt;dbl&gt;    &lt;dbl&gt;\n 1     6 PD        4 0.193   0.0708   0.0088 0.162  0.116   0.0739   0.0041\n 2     6 PD        5 0.195   0.0862   0.004  0.168  0.117   0.0812   0.0204\n 3     6 PD        6 0.181   0.0916  -0.0037 0.215  0.164   0.113    0.0155\n 4    29 PD        4 0.159   0.0438  -0.0253 0.175  0.0161  0.0621   0.0121\n 5    29 PD        5 0.0881  0.0446  -0.0288 0.136  0.0377  0.0277   0.0444\n 6    34 CTRL      4 0.137   0.0113  -0.0792 0.166  0.0045 -0.0075   0.0432\n 7    34 CTRL      6 0.0746  0.0009  -0.0089 0.140  0.0635 -0.024    0.0483\n 8    36 CTRL      1 0.139   0.0438  -0.0466 0.152  0.0279  0.0137   0.0513\n 9    36 CTRL      4 0.180   0.0772  -0.0648 0.205 -0.0116 -0.0477   0.0415\n10    37 PD        3 0.226   0.0412  -0.0565 0.219  0.0971  0.0195   0.0644\n# ℹ 215 more rows\n# ℹ 41 more variables: DMN6 &lt;dbl&gt;, DMN6_CON &lt;dbl&gt;, DMN6_DAN &lt;dbl&gt;,\n#   DMN6_SAL &lt;dbl&gt;, DMN6_SMN7 &lt;dbl&gt;, SAL &lt;dbl&gt;, SAL_SMN7 &lt;dbl&gt;, SMN7 &lt;dbl&gt;,\n#   wave &lt;dbl&gt;, date &lt;date&gt;, Exclude &lt;chr&gt;, RSNdata &lt;dbl&gt;, RSNexclude &lt;chr&gt;,\n#   RSNexcludeDevDem &lt;chr&gt;, CogDate_0 &lt;date&gt;, CCIRtrio_MR_date_0 &lt;date&gt;,\n#   Dur_PDsx_0 &lt;dbl&gt;, PIBpos18 &lt;chr&gt;, Neuro_Dx &lt;chr&gt;, NeuroCDR_0 &lt;chr&gt;,\n#   NeuroCDR_1 &lt;chr&gt;, NeuroCDR_2 &lt;chr&gt;, NeuroCDR_3 &lt;chr&gt;, NeuroCDR_4 &lt;chr&gt;, …\n\n\n\n\n\nggplot(example,\n   aes(x = year, y = SMN7, group = ID)) + geom_point()"
+    "text": "Example\n\nDataPlot\n\n\n\n\nCode\nexample &lt;- read_csv(\"https://raw.githubusercontent.com/josh-jackson/longitudinal-2021/master/example.csv\")\nexample$year &lt;- example$week\nexample \n\n\n# A tibble: 225 × 51\n      ID group  time    CON CON_SAL CON_SMN7   DAN DAN_CON DAN_SAL DAN_SMN7\n   &lt;dbl&gt; &lt;chr&gt; &lt;dbl&gt;  &lt;dbl&gt;   &lt;dbl&gt;    &lt;dbl&gt; &lt;dbl&gt;   &lt;dbl&gt;   &lt;dbl&gt;    &lt;dbl&gt;\n 1     6 PD        4 0.193   0.0708   0.0088 0.162  0.116   0.0739   0.0041\n 2     6 PD        5 0.195   0.0862   0.004  0.168  0.117   0.0812   0.0204\n 3     6 PD        6 0.181   0.0916  -0.0037 0.215  0.164   0.113    0.0155\n 4    29 PD        4 0.159   0.0438  -0.0253 0.175  0.0161  0.0621   0.0121\n 5    29 PD        5 0.0881  0.0446  -0.0288 0.136  0.0377  0.0277   0.0444\n 6    34 CTRL      4 0.137   0.0113  -0.0792 0.166  0.0045 -0.0075   0.0432\n 7    34 CTRL      6 0.0746  0.0009  -0.0089 0.140  0.0635 -0.024    0.0483\n 8    36 CTRL      1 0.139   0.0438  -0.0466 0.152  0.0279  0.0137   0.0513\n 9    36 CTRL      4 0.180   0.0772  -0.0648 0.205 -0.0116 -0.0477   0.0415\n10    37 PD        3 0.226   0.0412  -0.0565 0.219  0.0971  0.0195   0.0644\n# ℹ 215 more rows\n# ℹ 41 more variables: DMN6 &lt;dbl&gt;, DMN6_CON &lt;dbl&gt;, DMN6_DAN &lt;dbl&gt;,\n#   DMN6_SAL &lt;dbl&gt;, DMN6_SMN7 &lt;dbl&gt;, SAL &lt;dbl&gt;, SAL_SMN7 &lt;dbl&gt;, SMN7 &lt;dbl&gt;,\n#   wave &lt;dbl&gt;, date &lt;date&gt;, Exclude &lt;chr&gt;, RSNdata &lt;dbl&gt;, RSNexclude &lt;chr&gt;,\n#   RSNexcludeDevDem &lt;chr&gt;, CogDate_0 &lt;date&gt;, CCIRtrio_MR_date_0 &lt;date&gt;,\n#   Dur_PDsx_0 &lt;dbl&gt;, PIBpos18 &lt;chr&gt;, Neuro_Dx &lt;chr&gt;, NeuroCDR_0 &lt;chr&gt;,\n#   NeuroCDR_1 &lt;chr&gt;, NeuroCDR_2 &lt;chr&gt;, NeuroCDR_3 &lt;chr&gt;, NeuroCDR_4 &lt;chr&gt;, …\n\n\n\n\n\n\nCode\nggplot(example,\n   aes(x = year, y = SMN7, group = ID)) + geom_point()"
   },
   {
     "objectID": "intro-1.html#individual-level",
     "href": "intro-1.html#individual-level",
     "title": "intro",
     "section": "Individual level",
-    "text": "Individual level\n\nggplot(example, aes(x = year, y = SMN7, group = ID)) + geom_line() +  geom_point() + facet_wrap( ~ ID)"
+    "text": "Individual level\n\n\nCode\nggplot(example, aes(x = year, y = SMN7, group = ID)) + geom_line() +  geom_point() + facet_wrap( ~ ID)"
   },
   {
     "objectID": "intro-1.html#two-questions-we-need-to-answer",
@@ -95,7 +95,7 @@
     "href": "intro-1.html#defining-a-time-metric",
     "title": "intro",
     "section": "Defining a time metric",
-    "text": "Defining a time metric\n\nTime is the most important part of a longitudinal analyses. The key to interpreting your output is to know how you handled your time variable.\nWhat is the process that is changing someone? Age? Time in study? Year? Wave?\nIs it a naturally occurring developmental process? Then maybe age is the best metric. What about tracking child’s cognitive ability, something that might be influenced by level of schooling? Here grade may be more important than age. If you are running an intervention you may want to put everyone on the same starting metric and then control for nuisance variables like age or schooling level."
+    "text": "Defining a time metric\n\nTime is the most important part of a longitudinal analyses. The key to interpreting your output is to know how you handled your time variable.\nWhat is the process that is changing someone? Age? Time in study? Year? Wave?\nIs it a naturally occurring developmental process? Then maybe age is the best metric. What about tracking child’s cognitive ability, something that might be influenced by level of schooling? Grade may be more important. If you are running an intervention you may want to put everyone on the same starting metric and then control for nuisance variables like age or schooling level."
   },
   {
     "objectID": "intro-1.html#temporal-design",
@@ -116,7 +116,7 @@
     "href": "intro-1.html#simple-to-begin-with",
     "title": "intro",
     "section": "Simple to begin with",
-    "text": "Simple to begin with\nBefore we get too fancy, lets just run some regressions.\n\nset.seed(11)\nex.random &lt;- example %&gt;% \n  dplyr::select(ID) %&gt;% \n  distinct %&gt;% \n  sample_n(10) \n\nexample2 &lt;-\n  left_join(ex.random, example)  \n  \nggplot(example2,\n   aes(x = week, y = SMN7, group = ID)) +  geom_point() + stat_smooth(method=\"lm\", se = FALSE) + facet_wrap( ~ID)"
+    "text": "Simple to begin with\nBefore we get too fancy, lets just run some regressions.\n\n\nCode\nset.seed(11)\nex.random &lt;- example %&gt;% \n  dplyr::select(ID) %&gt;% \n  distinct %&gt;% \n  sample_n(10) \n\nexample2 &lt;-\n  left_join(ex.random, example)  \n  \nggplot(example2,\n   aes(x = week, y = SMN7, group = ID)) +  geom_point() + stat_smooth(method=\"lm\", se = FALSE) + facet_wrap( ~ID)"
   },
   {
     "objectID": "intro-1.html#individual-regression-output",
@@ -291,7 +291,7 @@
     "href": "intro-1.html#date-time-metrics",
     "title": "intro",
     "section": "Date time metrics",
-    "text": "Date time metrics\n\nlibrary(lubridate)\n\nA date-time is a date plus a time: it uniquely identifies an instant in time (typically to the nearest second). These are called POSIXct in R.\n\ntoday()\n\n[1] \"2024-01-04\"\n\n\n\nnow()\n\n[1] \"2024-01-04 16:14:01 CST\""
+    "text": "Date time metrics\n\nlibrary(lubridate)\n\nA date-time is a date plus a time: it uniquely identifies an instant in time (typically to the nearest second). These are called POSIXct in R.\n\ntoday()\n\n[1] \"2024-01-05\"\n\n\n\nnow()\n\n[1] \"2024-01-05 10:09:43 CST\""
   },
   {
     "objectID": "intro-1.html#projects-and-rmarkdown",
@@ -312,7 +312,7 @@
     "href": "intro-1.html#codebook",
     "title": "intro",
     "section": "Codebook",
-    "text": "Codebook\nThe second step is a codebook. Arguably, this is the first step because you should create the codebook long before you open R and load your data.\nWhy a codebook? Well, because you typically have a lot of variables and you will not be able to remember all the details that go into each one of them (rating scale, what the actual item was, was it coded someway, etc). This is especially true now that data are being collected online, which often provides placeholder variable names.\nThis codebook will serve as a means to document RAW code. It will also allow us to automate some tasks that are somewhat cumbersome, facilitate open data practices, and efficiently see what variables are available."
+    "text": "Codebook\nArguably, this is the first step because you should create the codebook long before you open R.\nWhy a codebook? Because you have a lot of variables and you will not be able to remember all the details that go into each one of them.\nThis codebook will serve as a means to document RAW code. It will also allow us to automate some tasks that are somewhat cumbersome and facilitate open data practices."
   },
   {
     "objectID": "intro-1.html#data-1",
@@ -368,7 +368,7 @@
     "href": "intro-1.html#zero-order-correlations",
     "title": "intro",
     "section": "Zero-Order Correlations",
-    "text": "Zero-Order Correlations\nTo run the correlations, we will need to have our data in wide format\n\n\nCode\nb5_soep_long %&gt;%\n  unite(tmp, trait, year, sep = \"_\") %&gt;%\n  pivot_wider(names_from = tmp, values_from = value) %&gt;% \n  select(-Procedural__SID) %&gt;%\n  cor(., use = \"pairwise\") %&gt;%\n  round(., 2)\n\n\n         DOB   Sex A_2005 A_2009 A_2013 C_2005 C_2009 C_2013 E_2005 E_2009\nDOB     1.00  0.00   0.02   0.05   0.05   0.13   0.17   0.17  -0.03  -0.01\nSex     0.00  1.00  -0.01  -0.02   0.01  -0.06  -0.05  -0.05   0.10   0.09\nA_2005  0.02 -0.01   1.00   0.30   0.26   0.21   0.07   0.05   0.28   0.12\nA_2009  0.05 -0.02   0.30   1.00   0.32   0.08   0.21   0.06   0.15   0.28\nA_2013  0.05  0.01   0.26   0.32   1.00   0.05   0.07   0.19   0.13   0.15\nC_2005  0.13 -0.06   0.21   0.08   0.05   1.00   0.30   0.26   0.24   0.09\nC_2009  0.17 -0.05   0.07   0.21   0.07   0.30   1.00   0.37   0.09   0.25\nC_2013  0.17 -0.05   0.05   0.06   0.19   0.26   0.37   1.00   0.06   0.07\nE_2005 -0.03  0.10   0.28   0.15   0.13   0.24   0.09   0.06   1.00   0.39\nE_2009 -0.01  0.09   0.12   0.28   0.15   0.09   0.25   0.07   0.39   1.00\nE_2013 -0.08  0.12   0.11   0.15   0.28   0.08   0.11   0.22   0.38   0.42\nN_2005 -0.08  0.13   0.23   0.07   0.08   0.09  -0.02  -0.04   0.18   0.07\nN_2009 -0.04  0.14   0.10   0.23   0.10   0.01   0.10  -0.01   0.09   0.16\nN_2013 -0.05  0.13   0.09   0.07   0.21   0.02  -0.01   0.08   0.09   0.10\nO_2005  0.11  0.06   0.23   0.14   0.13   0.24   0.14   0.13   0.36   0.23\nO_2009  0.10  0.05   0.10   0.24   0.13   0.14   0.23   0.12   0.19   0.34\nO_2013  0.05  0.07   0.10   0.12   0.23   0.11   0.11   0.20   0.19   0.21\n       E_2013 N_2005 N_2009 N_2013 O_2005 O_2009 O_2013\nDOB     -0.08  -0.08  -0.04  -0.05   0.11   0.10   0.05\nSex      0.12   0.13   0.14   0.13   0.06   0.05   0.07\nA_2005   0.11   0.23   0.10   0.09   0.23   0.10   0.10\nA_2009   0.15   0.07   0.23   0.07   0.14   0.24   0.12\nA_2013   0.28   0.08   0.10   0.21   0.13   0.13   0.23\nC_2005   0.08   0.09   0.01   0.02   0.24   0.14   0.11\nC_2009   0.11  -0.02   0.10  -0.01   0.14   0.23   0.11\nC_2013   0.22  -0.04  -0.01   0.08   0.13   0.12   0.20\nE_2005   0.38   0.18   0.09   0.09   0.36   0.19   0.19\nE_2009   0.42   0.07   0.16   0.10   0.23   0.34   0.21\nE_2013   1.00   0.08   0.07   0.17   0.20   0.21   0.35\nN_2005   0.08   1.00   0.34   0.32   0.14   0.03   0.05\nN_2009   0.07   0.34   1.00   0.39   0.05   0.13   0.03\nN_2013   0.17   0.32   0.39   1.00   0.04   0.06   0.15\nO_2005   0.20   0.14   0.05   0.04   1.00   0.58   0.55\nO_2009   0.21   0.03   0.13   0.06   0.58   1.00   0.61\nO_2013   0.35   0.05   0.03   0.15   0.55   0.61   1.00"
+    "text": "Zero-Order Correlations\nTo run the correlations, we will need to have our data in wide format\n\n\nCode\nb5_soep_long %&gt;%\n  unite(tmp, trait, year, sep = \"_\") %&gt;%\n  pivot_wider(names_from = tmp, values_from = value) %&gt;% \n  select(-Procedural__SID) %&gt;%\n  cor(., use = \"pairwise\") %&gt;%\n  round(., 2)\n\n\n         DOB   Sex A_2005 A_2009 A_2013 C_2005 C_2009 C_2013 E_2005 E_2009\nDOB     1.00  0.00   0.02   0.05   0.05   0.13   0.17   0.17  -0.03  -0.01\nSex     0.00  1.00  -0.01  -0.02   0.01  -0.06  -0.05  -0.05   0.10   0.09\nA_2005  0.02 -0.01   1.00   0.30   0.26   0.21   0.07   0.05   0.28   0.12\nA_2009  0.05 -0.02   0.30   1.00   0.32   0.08   0.21   0.06   0.15   0.28\nA_2013  0.05  0.01   0.26   0.32   1.00   0.05   0.07   0.19   0.13   0.15\nC_2005  0.13 -0.06   0.21   0.08   0.05   1.00   0.30   0.26   0.24   0.09\nC_2009  0.17 -0.05   0.07   0.21   0.07   0.30   1.00   0.37   0.09   0.25\nC_2013  0.17 -0.05   0.05   0.06   0.19   0.26   0.37   1.00   0.06   0.07\nE_2005 -0.03  0.10   0.28   0.15   0.13   0.24   0.09   0.06   1.00   0.39\nE_2009 -0.01  0.09   0.12   0.28   0.15   0.09   0.25   0.07   0.39   1.00\nE_2013 -0.08  0.12   0.11   0.15   0.28   0.08   0.11   0.22   0.38   0.42\nN_2005 -0.08  0.13   0.23   0.07   0.08   0.09  -0.02  -0.04   0.18   0.07\nN_2009 -0.04  0.14   0.10   0.23   0.10   0.01   0.10  -0.01   0.09   0.16\nN_2013 -0.05  0.13   0.09   0.07   0.21   0.02  -0.01   0.08   0.09   0.10\nO_2005  0.11  0.06   0.23   0.14   0.13   0.24   0.14   0.13   0.36   0.23\nO_2009  0.10  0.05   0.10   0.24   0.13   0.14   0.23   0.12   0.19   0.34\nO_2013  0.05  0.07   0.10   0.12   0.23   0.11   0.11   0.20   0.19   0.21\n       E_2013 N_2005 N_2009 N_2013 O_2005 O_2009 O_2013\nDOB     -0.08  -0.08  -0.04  -0.05   0.11   0.10   0.05\nSex      0.12   0.13   0.14   0.13   0.06   0.05   0.07\nA_2005   0.11   0.23   0.10   0.09   0.23   0.10   0.10\nA_2009   0.15   0.07   0.23   0.07   0.14   0.24   0.12\nA_2013   0.28   0.08   0.10   0.21   0.13   0.13   0.23\nC_2005   0.08   0.09   0.01   0.02   0.24   0.14   0.11\nC_2009   0.11  -0.02   0.10  -0.01   0.14   0.23   0.11\nC_2013   0.22  -0.04  -0.01   0.08   0.13   0.12   0.20\nE_2005   0.38   0.18   0.09   0.09   0.36   0.19   0.19\nE_2009   0.42   0.07   0.16   0.10   0.23   0.34   0.21\nE_2013   1.00   0.08   0.07   0.17   0.20   0.21   0.35\nN_2005   0.08   1.00   0.34   0.32   0.14   0.03   0.05\nN_2009   0.07   0.34   1.00   0.39   0.05   0.13   0.03\nN_2013   0.17   0.32   0.39   1.00   0.04   0.06   0.15\nO_2005   0.20   0.14   0.05   0.04   1.00   0.58   0.55\nO_2009   0.21   0.03   0.13   0.06   0.58   1.00   0.61\nO_2013   0.35   0.05   0.03   0.15   0.55   0.61   1.00\n\n\nCode\nresult &lt;- correlation(iris)"
   },
   {
     "objectID": "intro-1.html#timepoint-summary",
@@ -382,7 +382,7 @@
     "href": "intro-1.html#lines-lines-lines",
     "title": "intro",
     "section": "LINES LINES LINES",
-    "text": "LINES LINES LINES\n\nAlmost all of the questions we have can be simplified down to fitting a line per person.  \nPerson level trajectories index change for a person\nAverage person trajectory is the average trajectory\nDifferences among the trajectories reflect individual differences in change\nPredictors of change are just a correlation with the trajectory and the predictor"
+    "text": "LINES LINES LINES\n\nAlmost all of the questions we have can be simplified down to fitting a line per person.\n\nPerson level trajectories index change for a person\nAverage person trajectory is the average trajectory\nDifferences among the trajectories reflect individual differences in change\nPredictors of change are just a correlation with the trajectory and the predictor"
   },
   {
     "objectID": "intro-1.html#terms",
