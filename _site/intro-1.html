@@ -1283,7 +1283,7 @@ Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1</code></pre>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb59"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb59-1"><a href="#cb59-1"></a><span class="fu">now</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>[1] "2024-01-05 10:09:43 CST"</code></pre>
+<pre><code>[1] "2024-01-05 10:22:09 CST"</code></pre>
 </div>
 </div>
 </section>
@@ -50989,7 +50989,7 @@ Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1</code></pre>
 </section>
 <section class="slide level2">
 
-<p>Here we want to break our item column up into different components to assist with different calculations. Often you will have some sort of hierarchy of variables where items are nested within scales which are nested within questionnaires. This is where you can code that information.</p>
+<p>Here we want to break our item column up into different components to assist with different calculations. Often you will have some sort of hierarchy of variables where items are nested within scales which are nested within questionnaires.</p>
 <div class="cell">
 <details>
 <summary>Code</summary>
@@ -51072,7 +51072,17 @@ Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1</code></pre>
 <span id="cb94-3"><a href="#cb94-3"></a>soep<span class="sc">$</span>C<span class="fl">.2005</span> <span class="ot">&lt;-</span> <span class="fu">with</span>(soep, <span class="fu">rowMeans</span>(<span class="fu">cbind</span>(<span class="st">`</span><span class="at">Big 5__C_thorough.2005</span><span class="st">`</span>, </span>
 <span id="cb94-4"><a href="#cb94-4"></a><span class="st">`</span><span class="at">Big 5__C_lazy.2005</span><span class="st">`</span>, </span>
 <span id="cb94-5"><a href="#cb94-5"></a><span class="st">`</span><span class="at">Big 5__C_efficient.2005</span><span class="st">`</span>), </span>
-<span id="cb94-6"><a href="#cb94-6"></a><span class="at">na.rm =</span> T)) </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb94-6"><a href="#cb94-6"></a><span class="at">na.rm =</span> T)) </span>
+<span id="cb94-7"><a href="#cb94-7"></a></span>
+<span id="cb94-8"><a href="#cb94-8"></a>soep<span class="sc">$</span>C<span class="fl">.2009</span> <span class="ot">&lt;-</span> <span class="fu">with</span>(soep, <span class="fu">rowMeans</span>(<span class="fu">cbind</span>(<span class="st">`</span><span class="at">Big 5__C_thorough.2009</span><span class="st">`</span>, </span>
+<span id="cb94-9"><a href="#cb94-9"></a><span class="st">`</span><span class="at">Big 5__C_lazy.2009</span><span class="st">`</span>, </span>
+<span id="cb94-10"><a href="#cb94-10"></a><span class="st">`</span><span class="at">Big 5__C_efficient.2009</span><span class="st">`</span>), </span>
+<span id="cb94-11"><a href="#cb94-11"></a><span class="at">na.rm =</span> T)) </span>
+<span id="cb94-12"><a href="#cb94-12"></a></span>
+<span id="cb94-13"><a href="#cb94-13"></a>soep<span class="sc">$</span>C<span class="fl">.2013</span> <span class="ot">&lt;-</span> <span class="fu">with</span>(soep, <span class="fu">rowMeans</span>(<span class="fu">cbind</span>(<span class="st">`</span><span class="at">Big 5__C_thorough.2013</span><span class="st">`</span>, </span>
+<span id="cb94-14"><a href="#cb94-14"></a><span class="st">`</span><span class="at">Big 5__C_lazy.2013</span><span class="st">`</span>, </span>
+<span id="cb94-15"><a href="#cb94-15"></a><span class="st">`</span><span class="at">Big 5__C_efficient.2013</span><span class="st">`</span>), </span>
+<span id="cb94-16"><a href="#cb94-16"></a><span class="at">na.rm =</span> T)) </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>DO NOT COPY AND PASTE IN YOUR CODE</p>
 </section>

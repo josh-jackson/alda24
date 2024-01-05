@@ -917,7 +917,7 @@ head(soep_long)
 
 ---
 
-Here we want to break our item column up into different components to assist with different calculations. Often you will have some sort of hierarchy of variables where items are nested within scales which are nested within questionnaires. This is where you can code that information.
+Here we want to break our item column up into different components to assist with different calculations. Often you will have some sort of hierarchy of variables where items are nested within scales which are nested within questionnaires. 
 
 ```{r, echo =TRUE}
 #| code-fold: true
@@ -974,6 +974,15 @@ soep$C.2005 <- with(soep, rowMeans(cbind(`Big 5__C_thorough.2005`,
 `Big 5__C_efficient.2005`), 
 na.rm = T)) 
 
+soep$C.2009 <- with(soep, rowMeans(cbind(`Big 5__C_thorough.2009`, 
+`Big 5__C_lazy.2009`, 
+`Big 5__C_efficient.2009`), 
+na.rm = T)) 
+
+soep$C.2013 <- with(soep, rowMeans(cbind(`Big 5__C_thorough.2013`, 
+`Big 5__C_lazy.2013`, 
+`Big 5__C_efficient.2013`), 
+na.rm = T)) 
 
 ```
 
