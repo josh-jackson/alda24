@@ -398,8 +398,8 @@
 </div>
 
 </section>
-<section id="goals-for-today" class="slide level2">
-<h2>Goals for today:</h2>
+<section id="goals-for-todayweek" class="slide level2">
+<h2>Goals for today/week:</h2>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb1"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1"></a><span class="fu">library</span>(tidyverse)</span>
 <span id="cb1-2"><a href="#cb1-2"></a><span class="fu">library</span>(readr)</span>
@@ -553,7 +553,14 @@
 <ul>
 <li><p>Time is the most important part of a longitudinal analyses. The key to interpreting your output is to know how you handled your time variable.</p></li>
 <li><p>What is the process that is changing someone? Age? Time in study? Year? Wave?</p></li>
-<li><p>Is it a naturally occurring developmental process? Then maybe age is the best metric. What about tracking child’s cognitive ability, something that might be influenced by level of schooling? Grade may be more important. If you are running an intervention you may want to put everyone on the same starting metric and then control for nuisance variables like age or schooling level.</p></li>
+<li><p>Is it a naturally occurring developmental process? Then maybe age is the best metric. What about tracking child’s cognitive ability, something that might be influenced by level of schooling? Intervention?</p></li>
+</ul>
+</section>
+<section id="defining-a-time-metric-1" class="slide level2">
+<h2>Defining a time metric</h2>
+<ul>
+<li><p>There is no right time metric. A time metric is merely how you interpret the lines you are creating.</p></li>
+<li><p>However, your choice will determine what research questions you can answer. E.g. do different age groups change differently? Age cannot be your time metric because your question implies a different time metric by which age differs on.</p></li>
 </ul>
 </section>
 <section id="temporal-design" class="slide level2">
@@ -660,10 +667,11 @@
 <img data-src="intro-1_files/figure-revealjs/unnamed-chunk-11-1.png" width="960" class="r-stretch"></section>
 <section id="thinking-longitudinally" class="slide level2">
 <h2>Thinking longitudinally</h2>
-<p>Almost all of the questions we have can be simplified down to: lines/trajectories.</p>
+<p>Almost all of the questions we have can be simplified down to: lines/trajectories, SDs, and correlations.</p>
 <ul>
 <li><p>Person level trajectories index change for a person</p></li>
 <li><p>Average person trajectory is the average trajectory</p></li>
+<li><p>Differences among people’s trajectories reflect individual differences in change indexed by a SD</p></li>
 <li><p>Predictors of change are just a correlation with the trajectory and the predictor</p></li>
 </ul>
 </section>
@@ -677,9 +685,9 @@
 <section id="why-not-rm-anova" class="slide level2">
 <h2>Why not RM ANOVA?</h2>
 <ol type="1">
-<li>Cannot handle missing data</li>
+<li>Cannot handle missing data (listwise)</li>
 <li>Assumes rate of change is the same for all individuals.</li>
-<li>Time is categorical.</li>
+<li>Time is treated as categorical.</li>
 <li>Accounting for correlation across time uses up many parameters (df penalty).</li>
 <li>Cannot handle some types of predictors</li>
 <li>Is a special case of MLM, so might as well learn/use flexible model</li>
@@ -690,7 +698,7 @@
 <ul>
 <li><p>Many designs only have 2 time points of data i.e.&nbsp;pre/post.</p></li>
 <li><p>These types of designs have been derided for decades (Cronbach &amp; Furby, 1970; Rogosa, 1983), suggesting that we shouldn’t even look at change because they offer too many problems.</p></li>
-<li><p>Problems include: hard to separate measurement error from true change, unreliable estimate of change, often associated with initial level</p></li>
+<li><p>Problems include: hard to separate measurement error from true change, unreliable estimate of change, changes is often associated with initial level</p></li>
 </ul>
 </section>
 <section id="simple-regression-models" class="slide level2">
@@ -1277,13 +1285,13 @@ Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1</code></pre>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb57"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb57-1"><a href="#cb57-1"></a><span class="fu">today</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>[1] "2024-01-05"</code></pre>
+<pre><code>[1] "2024-01-15"</code></pre>
 </div>
 </div>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb59"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb59-1"><a href="#cb59-1"></a><span class="fu">now</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>[1] "2024-01-05 10:22:09 CST"</code></pre>
+<pre><code>[1] "2024-01-15 15:11:56 CST"</code></pre>
 </div>
 </div>
 </section>

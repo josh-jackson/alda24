@@ -377,18 +377,19 @@ summary(res.change.m)
 
 ```
 
-## residual sd from the regression 
+## residual sd from the regression
 
 ```{r}
 #standard error of the estimate from linear model
 0.1565^2
 ```
 
-Is equal to the SEM t2 variance. SEM is just regression. 
+Is equal to the SEM t2 variance. SEM is just regression.
 
----------
+------------------------------------------------------------------------
 
 Note that this model isn't telling us anything about the difference score or even the means of the numbers per se. .845 and .097 are any means or differences.
+
 ```{r}
 library(psych)
 describe(df)
@@ -397,11 +398,12 @@ describe(df)
 This is why I am not a fan of the residualzed change score. It doesn't get at change the way we typically think of it. Previously our MLMs provide a way to think about what change means, and SEMs will do the same.
 
 ## Latent change score
+
 Using SEM we can have:
 
-1)  Examine absolute differences 
+1)  Examine absolute differences
 
-2)  Able to separate (account for) initial levels from change 
+2)  Able to separate (account for) initial levels from change
 
 3)  Measuring change latently, and thus error free.
 
@@ -419,8 +421,7 @@ df.long <- df %>%
 head(df.long)
 ```
 
-
----------------------------
+------------------------------------------------------------------------
 
 ```{r}
 #| code-fold: true
@@ -435,8 +436,7 @@ Time equals the absolute difference!! Intercept is the value at T1. I can recrea
 
 However, this does not tell you differences in how people change. That is, everyone is assumed to change similarly ie fixed slope.
 
-
---------------
+------------------------------------------------------------------------
 
 ```{r,eval = FALSE}
 library(lme4)
@@ -453,18 +453,15 @@ We can either do two things: go with Bayes or go with SEM. SEM is actully more f
 
 Knowing what we know about recreating difference scores via constraints, we can also make a latent change score by modifying the same residual path model. This time assuming the association between t1 and t2 are the same.
 
-
---------------
+------------------------------------------------------------------------
 
 Remember this is our residual change model
 
 ![](res.change.png)
 
-And remember that we can recreate a difference score if we set 
-`T2 = 1*T1 + e`
+And remember that we can recreate a difference score if we set `T2 = 1*T1 + e`
 
 `T2 - T1 = e`
-
 
 ------------------------------------------------------------------------
 
@@ -475,7 +472,6 @@ Now we can interpret the residual as change, as it is explicitly what is left ov
 ------------------------------------------------------------------------
 
 We have: 1. Mean and variance of the slope(change), akin to our random and fixed effects in MLM 2. Covariance between intercept and slope.
-
 
 ```{r}
 #| code-fold: true
@@ -521,18 +517,15 @@ Change now has an intercept and a variance -- just like in growth curves!
 
 ## Residualized latent change score
 
-Note that we haven't yet removed the variance from the T1 (control for T1). 
-
+Note that we haven't yet removed the variance from the T1 (control for T1).
 
 ![](res.lat.change.png)
 
-
--------
+------------------------------------------------------------------------
 
 This may or may not be something you want to do. It is mostly helpful if change has occurred prior to T1 and you are looking at the impact of some variable on change. If you are doing an intervention that takes place after T1 then maybe stick to latent change model. If you are measuring a developmental process across time and want to make sure that initial levels aren't influencing change then you may want to do this. If you are doing that but think that initial levels are related to the change process then maybe you would be over controlling, wiping away what may be important. ¯\_(ツ)\_/¯
 
-
--------
+------------------------------------------------------------------------
 
 ```{r}
 #| code-fold: true
@@ -574,16 +567,12 @@ summary(fit.1)
 ## expanding to more than 2 timepoints
 
 ## Cross-lagged panel model
-some cons:
-1. Arbitrary starting point can change association
-2. Time between lags can influence results because changes may not be aligned with assessment
-3. Different constructs may change at different rates
-4. Theoretically, the model suggest that one point in time influences change in some other construct. Why would Tuesday at 2 be so important, why not Thursday at 4?
-5. does not seperate within and betwene person processes
+
+some cons: 1. Arbitrary starting point can change association 2. Time between lags can influence results because changes may not be aligned with assessment 3. Different constructs may change at different rates 4. Theoretically, the model suggest that one point in time influences change in some other construct. Why would Tuesday at 2 be so important, why not Thursday at 4? 5. does not seperate within and betwene person processes
 
 ## RI-CLPM
 
-Helps some of the cons, not all. 
+Helps some of the cons, not all.
 
 ## LGCM-SR
 
@@ -595,28 +584,14 @@ Takes our two wave change model and expands it
 
 ![](latent.latent.png)
 
-
----------
-
+------------------------------------------------------------------------
 
 ![](F5.large.jpg)
 
-
-
-
 ## A unifying framework
 
-All of these two wave and cross lagged models are monsters in a number of ways. 1. They are huge and complicated messes.2. They combine different aspects of other models. Much like Frakenstein, they are built by parts of other models. 
+All of these two wave and cross lagged models are monsters in a number of ways. 1. They are huge and complicated messes.2. They combine different aspects of other models. Much like Frakenstein, they are built by parts of other models.
 
-Because they all can be built from one another the models can be thought of as subsets of one another. The differences are typically theoretical in nature. See this paper for an overview: 
+Because they all can be built from one another the models can be thought of as subsets of one another. The differences are typically theoretical in nature. See this paper for an overview:
 
 https://pdfs.semanticscholar.org/fbf1/167a9ada8b416267ea75a258f8f2881f6654.pdf
-
-
-
-
-
-
-
-
-

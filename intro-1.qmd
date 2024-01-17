@@ -9,8 +9,7 @@ html:
   code-summary: Show the code
 ---
 
-
-## Goals for today:
+## Goals for today/week:
 
 ```{r}
 library(tidyverse)
@@ -32,6 +31,7 @@ library(rmarkdown)
 1.  lines/ trajectories
 
 2.  variance decomposition (more on this later)
+
 :::
 
 ::: {.column width="65%"}
@@ -106,7 +106,6 @@ ro.ml + noro.ml
 
 ```
 
-
 ## How do we define "change"?
 
 -   Because there are many types of change, we will view change in terms of the model.
@@ -163,12 +162,12 @@ ggplot(example, aes(x = year, y = SMN7, group = ID)) + geom_line() +  geom_point
 
 ## Two questions we need to answer
 
-1. Shape. What is the theoretical shape we want to model - linear, quadradic, cyclical, etc?
-2. Time. Is shape related to calendar time, age, or maybe artificial time such as grade?
+1.  Shape. What is the theoretical shape we want to model - linear, quadradic, cyclical, etc?
+2.  Time. Is shape related to calendar time, age, or maybe artificial time such as grade?
 
 ## Defining shape
 
-We will address different shapes later in the semester. Right now we are just working with simple lines. 
+We will address different shapes later in the semester. Right now we are just working with simple lines.
 
 ## Defining a time metric
 
@@ -176,7 +175,13 @@ We will address different shapes later in the semester. Right now we are just wo
 
 -   What is the process that is changing someone? Age? Time in study? Year? Wave?
 
--   Is it a naturally occurring developmental process? Then maybe age is the best metric. What about tracking child's cognitive ability, something that might be influenced by level of schooling? Grade may be more important. If you are running an intervention you may want to put everyone on the same starting metric and then control for nuisance variables like age or schooling level.
+-   Is it a naturally occurring developmental process? Then maybe age is the best metric. What about tracking child's cognitive ability, something that might be influenced by level of schooling? Intervention? 
+
+## Defining a time metric
+
+- There is no right time metric. A time metric is merely how you interpret the lines you are creating. 
+
+- However, your choice will determine what research questions you can answer. E.g. do different age groups change differently? Age cannot be your time metric because your question implies a different time metric by which age differs on. 
 
 ## Temporal design
 
@@ -241,11 +246,13 @@ ggplot(example, aes(x = year, y = SMN7, group = ID)) + geom_point(alpha = 0.05) 
 
 ## Thinking longitudinally
 
-Almost all of the questions we have can be simplified down to: lines/trajectories.
+Almost all of the questions we have can be simplified down to: lines/trajectories, SDs, and correlations.
 
 -   Person level trajectories index change for a person
 
 -   Average person trajectory is the average trajectory
+
+-  Differences among people's trajectories reflect individual differences in change indexed by a SD
 
 -   Predictors of change are just a correlation with the trajectory and the predictor
 
@@ -253,31 +260,30 @@ Almost all of the questions we have can be simplified down to: lines/trajectorie
 
 -   Simple regression, MLM and SEM (and even GAMs) can be equivalent.
 
--   Why learn multiple? Because each method has pros and cons. 
+-   Why learn multiple? Because each method has pros and cons.
 
 ## Why not RM ANOVA?
 
-1.  Cannot handle missing data
+1.  Cannot handle missing data (listwise)
 2.  Assumes rate of change is the same for all individuals.
-3.  Time is categorical.
+3.  Time is treated as categorical.
 4.  Accounting for correlation across time uses up many parameters (df penalty).
 5.  Cannot handle some types of predictors
 6.  Is a special case of MLM, so might as well learn/use flexible model
 
-
 ## 2 time point models
 
-- Many designs only have 2 time points of data i.e. pre/post. 
+-   Many designs only have 2 time points of data i.e. pre/post.
 
-- These types of designs have been derided for decades (Cronbach & Furby, 1970; Rogosa, 1983), suggesting that we shouldn't even look at change because they offer too many problems.
+-   These types of designs have been derided for decades (Cronbach & Furby, 1970; Rogosa, 1983), suggesting that we shouldn't even look at change because they offer too many problems.
 
-- Problems include: hard to separate measurement error from true change, unreliable estimate of change, often associated with initial level 
+-   Problems include: hard to separate measurement error from true change, unreliable estimate of change, changes is often associated with initial level
 
 ## Simple regression models
 
-That said, it is useful to think through how one would analyze 2 timepoint data. 
+That said, it is useful to think through how one would analyze 2 timepoint data.
 
-If you had pre-post data, what would your linear regression model look like? 
+If you had pre-post data, what would your linear regression model look like?
 
 ```{r}
 #| code-fold: true
@@ -290,22 +296,20 @@ prepost <- example %>%
   prepost
 ```
 
-
 ## Change/difference score
 
-One large category of models are referred to as change score, because your DV is a computed difference (or change) score. 
+One large category of models are referred to as change score, because your DV is a computed difference (or change) score.
 
 ```{r}
 M1 <- lm((post - pre) ~ 1, data = prepost)
 tidy(M1)
 ```
 
------
+------------------------------------------------------------------------
 
 ```{r}
 augment(M1)
 ```
-
 
 ## residualized (autoregressive) model
 
@@ -314,20 +318,16 @@ M2 <- lm(post ~ 1 + pre, data = prepost)
 tidy(M2)
 ```
 
-
-------
+------------------------------------------------------------------------
 
 ```{r}
 prepost %>% 
 summarise(correlation = cor(pre, post))
 ```
 
+------------------------------------------------------------------------
 
-
-
------
-
-But how much did people change, mean level wise? 
+But how much did people change, mean level wise?
 
 ```{r}
 #| code-fold: true
@@ -338,12 +338,11 @@ predict.m2 <- cbind(prepost,p2 )
   summarise(mean(res.change))
 ```
 
-
 ## directly modeling the DV
 
-- While these models can provide some basic descriptives, they are less suitable for more advanced questions such as does everyone change in the same manner?  
+-   While these models can provide some basic descriptives, they are less suitable for more advanced questions such as does everyone change in the same manner?
 
-- These previous models were in the wide format, but we will be analyzing much of our data in the long format. 
+-   These previous models were in the wide format, but we will be analyzing much of our data in the long format.
 
 ```{r}
  prepost.l <- prepost %>% 
@@ -354,8 +353,8 @@ prepost.l
 
 ```
 
-
 ## random intercept model
+
 This is an MLM model
 
 ```{r}
@@ -364,8 +363,7 @@ M3 <- glmmTMB(SAL ~ 1 + (1 | ID), data = example)
 summary(M3)
 ```
 
-
-------
+------------------------------------------------------------------------
 
 ```{r}
 library(lme4)
@@ -373,9 +371,7 @@ M3l <- lmer(SAL ~ 1 + (1 | ID), data = example)
 summary(M3l)
 ```
 
-
-
--------
+------------------------------------------------------------------------
 
 ```{r}
 
@@ -383,62 +379,53 @@ M4 <- glmmTMB(SAL ~ 1 + wave + (1 | ID), data = example)
 summary(M4)
 ```
 
-
 ## 2 timepoint summary
 
-- There are multiple options that are not completely ideal, mostly limited by the data. 
+-   There are multiple options that are not completely ideal, mostly limited by the data.
 
-- If you examine absolute differences with the change score, you do not get to account for initial levels (and there tends to be a correlation)
+-   If you examine absolute differences with the change score, you do not get to account for initial levels (and there tends to be a correlation)
 
-- Change scores assume no error, while residualized change assumes people change the same (the regression to the mean)
+-   Change scores assume no error, while residualized change assumes people change the same (the regression to the mean)
 
-- We will revisit two time point models again when we discuss SEM
-
+-   We will revisit two time point models again when we discuss SEM
 
 ## LINES LINES LINES
 
--   Almost all of the questions we have can be simplified down to fitting a line per person.  
+-   Almost all of the questions we have can be simplified down to fitting a line per person.\
 -   Person level trajectories index change for a person
 -   Average person trajectory is the average trajectory
 -   Differences among the trajectories reflect individual differences in change
 -   Predictors of change are just a correlation with the trajectory and the predictor
 
-
--------
+------------------------------------------------------------------------
 
 ```{r}
 #| code-fold: true
 ggplot(example, aes(x = year, y = SMN7, group = ID, colour = ID)) + stat_smooth(method = "lm", se = FALSE, alpha = .5) + theme(legend.position="none")
 ```
 
+## Terms
 
+-   Between-Person (BP) Variation, Level-2, INTER-individual differences, Time-Invariant make comparisons to other people.
 
-## Terms 
+-   Within-Person (WP) Variation, Level-1, INTRA-individual, Differences, Time-Varying, make comparisons to an individual.
 
--   Between-Person (BP) Variation, Level-2, INTER-individual differences, Time-Invariant make comparisons to other people. 
+------------------------------------------------------------------------
 
--   Within-Person (WP) Variation, Level-1, INTRA-individual,  Differences, Time-Varying, make comparisons to an individual. 
-
-
-
----------
-
--   Any variable measured over time usually has both BP and WP variation. We need to consider how we can seperate these different sources of variance. 
+-   Any variable measured over time usually has both BP and WP variation. We need to consider how we can seperate these different sources of variance.
 
 ```{r, echo = FALSE}
 ggplot(example,
    aes(x = year, y = SMN7, group = ID, colour = ID)) + geom_line(alpha = .4) +scale_color_viridis(   ) 
 ```
 
-
 ## Terms
 
 -   Within-Person Change is often referred to as *systematic* (relatively lasting) change. Can refer to between-person (inter-individual) differences in within-person change (intra-individual)
 
--   Within-Person Fluctuation is *not systematic* change. The process  varies/fluctuates over time (e.g., emotion, stress) and is not due to error in measurement. Often time is in the model, but CHANGE is not the focus.  
+-   Within-Person Fluctuation is *not systematic* change. The process varies/fluctuates over time (e.g., emotion, stress) and is not due to error in measurement. Often time is in the model, but CHANGE is not the focus.
 
-
-------------
+------------------------------------------------------------------------
 
 ```{r,echo = FALSE}
 #| code-fold: true
@@ -457,12 +444,6 @@ p2 <- ggplot(example3,
 p1/p2
 ```
 
-
-
-
-
-
-
 ## DATA
 
 Why are we talking about data? Because 80%, maybe more, of your time spent with "analysis" is spent getting data in order and setting up your model of interest, especially true for longitudinal data.
@@ -477,11 +458,9 @@ Why are we talking about data? Because 80%, maybe more, of your time spent with 
 
 -   Long is what MLM, ggplot2 and tidyverse packages expect whereas SEM and a lot of descriptives are calculated using wide dataframes.
 
-
----
+------------------------------------------------------------------------
 
 ![](tidyr.gif)
-
 
 ## tidyr pivot functions
 
@@ -503,8 +482,7 @@ wide.ex <- long %>%
 wide.ex
 ```
 
-
-------
+------------------------------------------------------------------------
 
 ```{r, echo =TRUE}
 wide.ex <- long %>% 
@@ -512,12 +490,11 @@ wide.ex <- long %>%
 wide.ex
 ```
 
-
 ## pivot_longer
 
 The pivot_longer function takes three arguments: - cols is a list of columns that are to be collapsed. The columns can be referenced by column number or column name. - names_to is the name of the new column which will combine all column names. This is up to you to decide what the name is. - values_to is the name of the new column which will combine all column values associated with each variable combination.
 
----
+------------------------------------------------------------------------
 
 ```{r, echo = TRUE}
 wide.ex %>% 
@@ -542,7 +519,7 @@ wide<- tribble(
 wide
 ```
 
----
+------------------------------------------------------------------------
 
 ```{r, echo = TRUE}
 wide %>% 
@@ -553,7 +530,7 @@ wide %>%
 
 The time column is now specific to ext, which is a problem if I have more than one variable that I am pivoting. So how can we go ahead and separate out the ext part?
 
----
+------------------------------------------------------------------------
 
 ```{r, echo = TRUE}
 #| code-fold: true
@@ -565,7 +542,7 @@ wide %>%
 
 ```
 
----
+------------------------------------------------------------------------
 
 In terms of setting up your data, it is often helpful to include markers that separate parts of the variable eg "\_" or "." A variable that is ext_1 is easier to separate than ext1.
 
@@ -575,7 +552,7 @@ Also that the time column is a character rather than numeric. We need to change 
 long$time <- as.numeric(long$time)
 ```
 
----
+------------------------------------------------------------------------
 
 Something that is a little more elegant is to do both the separating AND the making into numeric in the original pivot_longer function
 
@@ -589,7 +566,7 @@ wide %>%
                names_prefix = "ext_") 
 ```
 
----
+------------------------------------------------------------------------
 
 names_transform does any transformations within the variables. Here instead of a separate call, we can make our variables numeric.
 
@@ -602,7 +579,7 @@ wide %>%
                names_transform = list(time = as.numeric)) 
 ```
 
----
+------------------------------------------------------------------------
 
 Another common problem that we often face is the need to unite two variables into one. Enter, the creatively titled unite function. Sometimes this happens when our time metric is entered in seperate columns.
 
@@ -617,7 +594,7 @@ df<-tibble(
 df
 ```
 
----
+------------------------------------------------------------------------
 
 To combine them into one time metric
 
@@ -643,7 +620,7 @@ today()
 now()
 ```
 
----
+------------------------------------------------------------------------
 
 Bringing these into R from some outside place (excel, spss) can lead to confusion, as they can be formatted differently
 
@@ -656,7 +633,7 @@ dmy("31-Jan-2017")
 
 ```
 
----
+------------------------------------------------------------------------
 
 You can create these relatively straight forwardly...by hand
 
@@ -669,7 +646,7 @@ mdy_hm("01/31/2017 08:01")
 
 Or you can use existing columns variables. This is where the {lubridate} package comes in handy
 
----
+------------------------------------------------------------------------
 
 ```{r, echo = TRUE}
 df %>% 
@@ -684,7 +661,7 @@ As with any project, but especially for longitudinal data, one of the most impor
 
 1.  rstudio projects 2. git and 3. codebooks are helpful in accomplishing these two goals. We will talk about #1 and #3 but I also encourage you to read about git. These are not the only way to do these sorts of analyses but I feel that exposure to them is helpful, as often in the social sciences these sort of decisions are not discussed.
 
----
+------------------------------------------------------------------------
 
 The main reason I am going over this is because too much of the code I see looks like this:
 
@@ -709,13 +686,13 @@ data <- import %>%
   mutate(score_mean9 = rowMeans(data[ ,c("Score1i", "Score2i", "Score3i", "Score4i")]))
 ```
 
----
+------------------------------------------------------------------------
 
 What these help to do is create a chain of processing where you start with RAW data and end up with the cleaned data. Importantly you can always start over from the raw data. This is important for people wanting to reproduce your findings and or your future self figuring out where a certain variable came from.
 
 We start creating the chain of processing by documenting all of your code. To do so we will be using rmarkdown or quarto documents, as the language is easier than LaTeX and more helpful than plaintext.
 
----
+------------------------------------------------------------------------
 
 When I create an rmarkdown document for my own research projects, I always start by setting up 3 components:
 
@@ -740,33 +717,33 @@ library(tidyverse)
 
 Arguably, this is the first step because you should *create* the codebook long before you open `R`.
 
-Why a codebook? Because you  have a lot of variables and you will not be able to remember all the details that go into each one of them. 
+Why a codebook? Because you have a lot of variables and you will not be able to remember all the details that go into each one of them.
 
-This codebook will serve as a means to document RAW code. It will also allow us to automate some tasks that are somewhat cumbersome and facilitate open data practices. 
+This codebook will serve as a means to document RAW code. It will also allow us to automate some tasks that are somewhat cumbersome and facilitate open data practices.
 
----
+------------------------------------------------------------------------
 
 To illustrate, we are going to using some data from the German Socioeconomic Panel Study (GSOEP), which is an ongoing Panel Study in Germany. Note that these data are for teaching purposes only, shared under the license for the Comprehensive SOEP teaching dataset. The full data are available for free at: https://www.diw.de/en/diw_02.c.222829.en/access_and_ordering.html.
 
----
+------------------------------------------------------------------------
 
-I created the codebook for you, and included what I believe are the core columns you may need. 
+I created the codebook for you, and included what I believe are the core columns you may need.
 
 https://raw.githubusercontent.com/josh-jackson/alda24/main/codebook.csv
 
-Some of these columns will not be particularly helpful for this dataset. For example, many of you likely work with datasets that have only a single file while others work with datasets spread across many files (e.g., different waves, different sources). 
+Some of these columns will not be particularly helpful for this dataset. For example, many of you likely work with datasets that have only a single file while others work with datasets spread across many files (e.g., different waves, different sources).
 
----
+------------------------------------------------------------------------
 
-1.  **dataset** this column indexes the **name** of the dataset that you will be pulling the data from. 
+1.  **dataset** this column indexes the **name** of the dataset that you will be pulling the data from.
 
 2.  **old_name** this column is the name of the variable in the data you are pulling it from. This should be exact. The goal of this column is that it will allow us to `select()` variables from the original data file
 
 3.  **item_text** this column is the original text that participants saw or a description of the item.
 
-4.  **scale** this column tells you what the scale of the variable is. Is it a numeric variable, a text variable, etc. 
+4.  **scale** this column tells you what the scale of the variable is. Is it a numeric variable, a text variable, etc.
 
------------
+------------------------------------------------------------------------
 
 5.  **reverse** this column tells you whether items in a scale need to be reverse coded. I recommend coding this as 1 (leave alone) and -1 (reverse).
 
@@ -776,7 +753,7 @@ Some of these columns will not be particularly helpful for this dataset. For exa
 
 8.  **recode** sometimes, we want to recode variables for analyses (e.g. for categorical variables with many levels where sample sizes for some levels are too small to actually do anything with it). I use this column to note the kind of recoding I'll do to a variable for transparency.
 
----
+------------------------------------------------------------------------
 
 Here are additional columns that will make our lives easier or are applicable to some but not all data sets:
 
@@ -784,22 +761,21 @@ Here are additional columns that will make our lives easier or are applicable to
 
 10. **label** label is basically one level lower than category. So if the category is Big 5, the label would be, or example, "A" for Agreeableness. This column is most important and useful when you have multiple items in a scales.
 
--------
+------------------------------------------------------------------------
 
 11. **item_name** This is the lowest level and most descriptive variable. It indicates which item in scale something is. So it may be "kind" for Agreebleness or "sex" for the demographic biological sex variable.
 
 12. **year** for longitudinal data, we have several waves of data and the name of the same item across waves is often different, so it's important to note to which wave an item belongs.
 
-13. **new_name**  It's purpose is to be the new name that we will give to the variable that is more useful and descriptive to us. I like to make it a combination of "category", "label", "item_name", and year using varying combos of "\_" and "." that we can use later with tidyverse functions.
+13. **new_name** It's purpose is to be the new name that we will give to the variable that is more useful and descriptive to us. I like to make it a combination of "category", "label", "item_name", and year using varying combos of "\_" and "." that we can use later with tidyverse functions.
 
-
-------
+------------------------------------------------------------------------
 
 All longitudinal datasets are horrible in some way. Doing this makes them less horrible. Is it some upfront work? Yes. Will it ultimately save you time? Yes. Also, if you know this prior to running a study you are making some sort of code book anyways, right, right? Might as well kill two birds with one stone.
 
 You can make the codebook anyway you want, but the two best options are miscrosoft excel and google pages. Not because they are necessarily the best functioning but because they are relatively ubiquitous and are easy to share.
 
----
+------------------------------------------------------------------------
 
 We will create a codebook but then bring the codebook into R via turning it into a csv. You can rethink the codebook as a way of coding prior to putting anything into R.
 
@@ -819,6 +795,7 @@ codebook
 ## Data
 
 Notice the horrible variable names
+
 ```{r}
 #| code-fold: true
 old.names <- codebook$old_name # get old column names
@@ -828,7 +805,7 @@ soep <- read.csv("https://raw.githubusercontent.com/josh-jackson/longitudinal-20
 soep
 ```
 
----
+------------------------------------------------------------------------
 
 ```{r}
 #| code-fold: true
@@ -839,15 +816,13 @@ soep
 
 ```
 
-
 ## Recode Variables
 
-Within R we treat missing values as `NA`, but many other programs from which you may be importing your data may use other codes (e.g. 999, -999, etc.). 
+Within R we treat missing values as `NA`, but many other programs from which you may be importing your data may use other codes (e.g. 999, -999, etc.).
 
 In the GSOEP, `-1` to `-7` indicate various types of missing values, so we will recode these to `NA`. To do this, we will use `mapvalues()`, from the `plyr` package.
 
-
-------
+------------------------------------------------------------------------
 
 (1) the variable you are recoding. Below that is indicated by "." which is shorthand for the data that was piped in.
 
@@ -857,7 +832,7 @@ In the GSOEP, `-1` to `-7` indicate various types of missing values, so we will 
 
 It is also helpful to turn off warnings if some levels are not in your data (`warn_missing = F`).
 
----
+------------------------------------------------------------------------
 
 ```{r}
 #| code-fold: true
@@ -867,9 +842,9 @@ soep <- soep %>%
 head(soep)
 ```
 
-------
+------------------------------------------------------------------------
 
-mapvalues technically is depreciated and from an old package {plyr}. The replacement for it is dplyr's recode. However, recode does not work well with vectorized names (which we pull in from our codebook) 
+mapvalues technically is depreciated and from an old package {plyr}. The replacement for it is dplyr's recode. However, recode does not work well with vectorized names (which we pull in from our codebook)
 
 and again, this isnt the way you NEED to clean your data. Seeing alternative options help expands your possibilities. ... like study abroad or dating.
 
@@ -881,7 +856,7 @@ There are a few ways to do this in `R`. Below, I'll demonstrate how to do so usi
 
 Before we can do that, though, we need to restructure the data a bit in order to bring in the reverse coding information from our codebook.
 
----
+------------------------------------------------------------------------
 
 Bring the wide dataset to long
 
@@ -899,7 +874,7 @@ str(soep_long)
 head(soep_long) 
 ```
 
----
+------------------------------------------------------------------------
 
 Bring in the codebook relevant items for reverse coding
 
@@ -914,10 +889,9 @@ soep_long <- soep %>%
 head(soep_long)
 ```
 
+------------------------------------------------------------------------
 
----
-
-Here we want to break our item column up into different components to assist with different calculations. Often you will have some sort of hierarchy of variables where items are nested within scales which are nested within questionnaires. 
+Here we want to break our item column up into different components to assist with different calculations. Often you will have some sort of hierarchy of variables where items are nested within scales which are nested within questionnaires.
 
 ```{r, echo =TRUE}
 #| code-fold: true
@@ -934,7 +908,7 @@ head(soep_long)
 ## almost half a million rows
 ```
 
----
+------------------------------------------------------------------------
 
 now it is ready to reverse code!
 
@@ -963,7 +937,7 @@ We'll start with our scale -- in this case, the Big 5.
 
 The "simplest" way, which is also the longest and most prone to error way because you'd have to do it seperately for each scale, in each year is to use a function like rowMeans which I don't recommend as that will be MANY MANY lines of code.
 
----
+------------------------------------------------------------------------
 
 ```{r, echo = TRUE, eval = FALSE}
 
@@ -988,7 +962,7 @@ na.rm = T))
 
 DO NOT COPY AND PASTE IN YOUR CODE
 
----
+------------------------------------------------------------------------
 
 We can use our codebook and `dplyr` to make our lives a whole lot easier. In general, trying to run everything simultaneously saves from copy-paste errors, makes your code more readable, and reduces the total amount of code. So while the below code may not make intuitive sense immediately, it is nonetheless what we are working towards. Also, going through line by line will help you see that.
 
@@ -1001,7 +975,7 @@ b5_soep_long <- soep_long %>%
 str(b5_soep_long)
 ```
 
----
+------------------------------------------------------------------------
 
 ```{r, echo=TRUE}
 #| code-fold: true
@@ -1012,9 +986,7 @@ b5_soep_long<- soep_long %>%
 head(b5_soep_long)
 ```
 
-
-
----
+------------------------------------------------------------------------
 
 Now that we have our means we can bring the demographic info back into the dataframe...or whatever else you would want to bring in.
 
@@ -1046,7 +1018,7 @@ b5_soep_long_des <- b5_soep_long %>%
 head(b5_soep_long_des)
 ```
 
----
+------------------------------------------------------------------------
 
 ```{r, echo = TRUE}
 #| code-fold: true
@@ -1056,7 +1028,7 @@ b5_soep_long_des <- b5_soep_long %>%
 head(b5_soep_long_des)
 ```
 
----
+------------------------------------------------------------------------
 
 ```{r}
 #| code-fold: true
@@ -1067,7 +1039,7 @@ b5_soep_long_des <- b5_soep_long  %>%
 head(b5_soep_long_des)
 ```
 
--------
+------------------------------------------------------------------------
 
 ```{r}
 library(easystats)
@@ -1077,7 +1049,6 @@ b5_soep_long  %>%
   report_table(.) %>% 
   head()
 ```
-
 
 ## count variables
 
@@ -1090,7 +1061,7 @@ events_long  <-soep_long %>%
 head(events_long )
 ```
 
----
+------------------------------------------------------------------------
 
 ```{r}
 events_long <- soep_long %>%
@@ -1100,13 +1071,13 @@ events_long <- soep_long %>%
 head(events_long )
 ```
 
----
+------------------------------------------------------------------------
 
 For count variables, like life events, we need to use something slightly different. We're typically more interested in counts -- in this case, how many people experienced each life event in the 10 years we're considering?
 
 To do this, we'll use a little bit of `dplyr` rather than the base `R` function `table()` that is often used for count data. Instead, we'll use a combination of `group_by()` and `n()` to get the counts by group. In the end, we're left with a nice little table of counts.
 
----
+------------------------------------------------------------------------
 
 ```{r, echo = TRUE}
 #| code-fold: true
@@ -1115,7 +1086,7 @@ events_long %>%
   dplyr::summarize(N = n()) 
 ```
 
----
+------------------------------------------------------------------------
 
 ```{r}
 #| code-fold: true
@@ -1142,7 +1113,6 @@ events_long %>%
   kbl(booktabs = T) %>% kable_styling(latex_options = "striped")
 ```
 
-
 ## Zero-Order Correlations
 
 To run the correlations, we will need to have our data in wide format
@@ -1159,8 +1129,7 @@ b5_soep_long %>%
 result <- correlation(iris)
 ```
 
-
---------
+------------------------------------------------------------------------
 
 ```{r}
 #| code-fold: true
@@ -1172,13 +1141,10 @@ corrs <- b5_soep_long %>%
 corrs
 ```
 
-
-----------
+------------------------------------------------------------------------
 
 ```{r}
 plot(summary(corrs))
 ```
 
-
------
-
+------------------------------------------------------------------------
