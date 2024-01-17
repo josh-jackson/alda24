@@ -11,7 +11,8 @@ html:
 
 ## Goals for today/week:
 
-```{r}
+```{r, echo = FALSE}
+
 library(tidyverse)
 library(readr)
 library(viridis)
@@ -31,7 +32,6 @@ library(rmarkdown)
 1.  lines/ trajectories
 
 2.  variance decomposition (more on this later)
-
 :::
 
 ::: {.column width="65%"}
@@ -175,13 +175,13 @@ We will address different shapes later in the semester. Right now we are just wo
 
 -   What is the process that is changing someone? Age? Time in study? Year? Wave?
 
--   Is it a naturally occurring developmental process? Then maybe age is the best metric. What about tracking child's cognitive ability, something that might be influenced by level of schooling? Intervention? 
+-   Is it a naturally occurring developmental process? Then maybe age is the best metric. What about tracking child's cognitive ability, something that might be influenced by level of schooling? Intervention?
 
 ## Defining a time metric
 
-- There is no right time metric. A time metric is merely how you interpret the lines you are creating. 
+-   There is no right time metric. A time metric is merely how you interpret the lines you are creating.
 
-- However, your choice will determine what research questions you can answer. E.g. do different age groups change differently? Age cannot be your time metric because your question implies a different time metric by which age differs on. 
+-   However, your choice will determine what research questions you can answer. E.g. do different age groups change differently? Age cannot be your time metric because your question implies a different time metric by which age differs on.
 
 ## Temporal design
 
@@ -252,7 +252,7 @@ Almost all of the questions we have can be simplified down to: lines/trajectorie
 
 -   Average person trajectory is the average trajectory
 
--  Differences among people's trajectories reflect individual differences in change indexed by a SD
+-   Differences among people's trajectories reflect individual differences in change indexed by a SD
 
 -   Predictors of change are just a correlation with the trajectory and the predictor
 
