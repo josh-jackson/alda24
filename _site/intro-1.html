@@ -1279,13 +1279,13 @@ Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1</code></pre>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb56"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb56-1"><a href="#cb56-1"></a><span class="fu">today</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>[1] "2024-01-17"</code></pre>
+<pre><code>[1] "2024-01-22"</code></pre>
 </div>
 </div>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb58"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb58-1"><a href="#cb58-1"></a><span class="fu">now</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>[1] "2024-01-17 12:43:37 CST"</code></pre>
+<pre><code>[1] "2024-01-22 15:36:05 CST"</code></pre>
 </div>
 </div>
 </section>
@@ -51084,7 +51084,12 @@ Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1</code></pre>
 <span id="cb93-13"><a href="#cb93-13"></a>soep<span class="sc">$</span>C<span class="fl">.2013</span> <span class="ot">&lt;-</span> <span class="fu">with</span>(soep, <span class="fu">rowMeans</span>(<span class="fu">cbind</span>(<span class="st">`</span><span class="at">Big 5__C_thorough.2013</span><span class="st">`</span>, </span>
 <span id="cb93-14"><a href="#cb93-14"></a><span class="st">`</span><span class="at">Big 5__C_lazy.2013</span><span class="st">`</span>, </span>
 <span id="cb93-15"><a href="#cb93-15"></a><span class="st">`</span><span class="at">Big 5__C_efficient.2013</span><span class="st">`</span>), </span>
-<span id="cb93-16"><a href="#cb93-16"></a><span class="at">na.rm =</span> T)) </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb93-16"><a href="#cb93-16"></a><span class="at">na.rm =</span> T)) </span>
+<span id="cb93-17"><a href="#cb93-17"></a></span>
+<span id="cb93-18"><a href="#cb93-18"></a>soep<span class="sc">$</span>C<span class="fl">.2013</span> <span class="ot">&lt;-</span> <span class="fu">with</span>(soep, <span class="fu">rowMeans</span>(<span class="fu">cbind</span>(<span class="st">`</span><span class="at">Big 5__C_thorough.2021</span><span class="st">`</span>, </span>
+<span id="cb93-19"><a href="#cb93-19"></a><span class="st">`</span><span class="at">Big 5__C_lazy.2021</span><span class="st">`</span>, </span>
+<span id="cb93-20"><a href="#cb93-20"></a><span class="st">`</span><span class="at">Big 5__C_efficient.2012</span><span class="st">`</span>), </span>
+<span id="cb93-21"><a href="#cb93-21"></a><span class="at">na.rm =</span> T)) </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>DO NOT COPY AND PASTE IN YOUR CODE</p>
 </section>

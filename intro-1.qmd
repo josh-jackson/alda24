@@ -958,6 +958,11 @@ soep$C.2013 <- with(soep, rowMeans(cbind(`Big 5__C_thorough.2013`,
 `Big 5__C_efficient.2013`), 
 na.rm = T)) 
 
+soep$C.2013 <- with(soep, rowMeans(cbind(`Big 5__C_thorough.2021`, 
+`Big 5__C_lazy.2021`, 
+`Big 5__C_efficient.2012`), 
+na.rm = T)) 
+
 ```
 
 DO NOT COPY AND PASTE IN YOUR CODE

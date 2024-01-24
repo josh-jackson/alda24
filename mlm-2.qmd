@@ -180,12 +180,15 @@ $${\beta}_{1j} = \gamma_{10} + U_{1j}$$ $${\beta}_{2k} = \gamma_{20} + U_{2k}$$
 
 - Remember that MLM is just like a lot of separate regressions done at Level 1. 
 
-- What happens when we have multiple predictors? They effect of any one variable partials out the common variance, the same as with multiple regression. 
+- What happens when we have multiple predictors? The effect of any one variable partials out the common variance, the same as with multiple regression. 
 
 ## Level 2 predictors
 
 Level 1: $${Y}_{ij} = \beta_{0j}  + \beta_{1j}X_{ij} + \varepsilon_{ij}$$ Level 2: $${\beta}_{0j} = \gamma_{00} + \gamma_{01}G_{j} +   U_{0j}$$\
 $${\beta}_{1j} = \gamma_{10} + U_{1j}$$
+
+-------
+
 
 Combined $${Y}_{ij} = \gamma_{00} + \gamma_{01}G_{j}+  \gamma_{10} (X_{ij}) + U_{0j} + U_{1j}(X_{ij}) + \varepsilon_{ij}$$ $${Y}_{ij} = [\gamma_{00} + \gamma_{01}G_{j}+ U_{0j}]  + [(\gamma_{10}  + U_{1j})(X_{ij})] + \varepsilon_{ij}$$
 
@@ -324,23 +327,22 @@ Level 2 variables are what level 1 variables are "nested" in (people, schools, c
 We are going to use level one components to run a regression, all the while level 1 is also estimating a regression. (Coefficents as outcomes)
 
 
-## Stroop example
+## Longitudinal example
 
-We calculate stroop scores by looking at repeated trials of congruent vs not congruent. This is dummy coded such that the $\beta_{1}$ reflects the average stroop effect. How much slower are people in incongruent trials?
+Level 1 can be thought of as regressions for each person. 
 
-$$Y_{i} = \beta_{0} + \beta_{1}X_{1} + \varepsilon_i$$
-
-------------------------------------------------------------------------
-
-$$Y_{trials, i} = \beta_{0i} + \beta_{1i}X_{trial,i} + \varepsilon_{trial,i}$$
-
-$$\beta_{0} = \gamma_{00} + U_{0i}$$ $$\beta_{1} = \gamma_{10} +\gamma_{11}Age_i+ U_{1i}$$
-
-Our B1 coefficient indexes the stroop effect. However, people differ on this stroop effect. There is some average effect (fixed effect) that people vary around. Each person has some personal $\beta_1$, which we find using Level 1 data. From there we can also ask questions (with regressions) about that random variable.
+$$Y_\text{josh} = \beta_{0} + \beta_{1}T_\text{josh} + \varepsilon_\text{josh}$$
 
 ------------------------------------------------------------------------
 
-People differ on the stroop
+$$Y_{time, i} = \beta_{0i} + \beta_{1i}X_{time,i} + \varepsilon_{time,i}$$
+
+$$\beta_{0i} = \gamma_{00} + U_{0i}$$ 
+$$\beta_{1i} = \gamma_{10} +\gamma_{11}\text{Life Event}_i+ U_{1i}$$
+
+Our B1 coefficient indexes people's slope, and can be thought of as a simple vector of scores. This vector can be a DV and can be decomposed further by a simple regression. There is some average effect (fixed effect) that serves as the intercept. 
+
+------------------------------------------------------------------------
 
 ```{r}
 #| code-fold: true
@@ -358,7 +360,7 @@ example2 <-
   
 g2<- ggplot(example2,
    aes(x = week, y = SMN7, group = ID)) +  geom_point() + stat_smooth(method="lm", formula=y~1, se = FALSE) + facet_wrap( ~ID) +
-  geom_hline(yintercept = .13) +  ylab("stroop effect") + xlab("trials") +
+  geom_hline(yintercept = .13) +  ylab("DV") + xlab("year") +
   geom_label(label="Grand mean ",  x=1,y=.13,
     label.size = 0.15) 
 g2
@@ -380,13 +382,12 @@ mlm %>% group_by(ID) %>%
 
 To sum up the first two ways to think about regression, we take a relationship that could be simplified by aggregation, and conduct regressions from regressions. (Regression inception)
 
-The third way is to think of questions at different levels. At level 1 we can ask lower-unit questions e.g., if trials are nested within person, what predicts lengthier trials?
+The third way is to think of questions at different levels. At level 1 we can ask lower-unit questions e.g., if you are stressed at one time point, will you have higher scores?
 
-If level 1 is made up of repeated observations, then we can ask level 1/observation level questions like does failure at the trial level impact future trial performance.
 
 ------------------------------------------------------------------------
 
-At level 2 we can ask broader-unit questions. E.g., is age associated with stroop differences
+At level 2 we can ask broader-unit questions. E.g., are life events associated with change 
 
 Often level 2 is between person variables.
 
@@ -404,7 +405,7 @@ $$Y_{trials, i} = \beta_{0i} + \beta_{1i}X_{trial,i} + \varepsilon_{trial}$$ $$\
 
 ![](btw.png)
 
-Assume a simple intercept only model where we aggregate across types of trials.
+Assume a simple intercept only regression model where we aggregate across time.
 
 ------------------------------------------------------------------------
 
@@ -416,19 +417,10 @@ A MLM intercept only model takes what was previously chalked up to error and rea
 
 Model for the means (like normal) and now we have a model for the variance (random effects!)
 
-We will treat random effects as variables themselves e.g. individual differences in reaction time or stroop effect. They index how much people DIFFER on some effect. e.g. does everyone show the same stroop effect?
+We will treat random effects as variables themselves e.g. individual differences in change. They index how much people DIFFER on some effect. 
 
-We can relate the random effects to other random effects e.g., do people who show an effect have a slower reaction time?
+We can relate the random effects to other random effects e.g., do people who increase faster also start higher? 
 
--------------
-
-Random effects used to be error, but they are going to be useful going forward.
-
-We will treat them as variables themselves e.g. individual differences in how people change
-
-They index how much people DIFFER on some effect. e.g. does everyone change the same, or are there differences in how people change?
-
-We can relate the random effects to other random effects e.g., do people who increase on X also start higher on X.
 
 ## 5. Shrinkage/partial pooling
 
@@ -438,13 +430,13 @@ We can relate the random effects to other random effects e.g., do people who inc
 
 ------------------------------------------------------------------------
 
-If we take our simplified stroop effect model (an empty model)
+If we take an empty model
 
-$$Y_{trials, i} = \beta_{0i} +  \varepsilon_{trial}$$
+$$Y_{time, i} = \beta_{0i} +  \varepsilon_{time, i}$$
 
-$$\beta_{0} = \gamma_{00} + U_{0i}$$
+$$\beta_{0i} = \gamma_{00} + U_{0i}$$
 
-Where does $U_{0i}$ come from? If we calculated each by hand, through taking the average reaction time for a person i and subtracting that from the grand mean reaction time, would that equal $U_{0i}$ ?
+Where does $U_{0i}$ come from? If we calculated each by hand, through taking the average assessment  for a person i and subtracting that from the grand mean average $\gamma_{00}$, would that equal $U_{0i}$ ?
 
 ## Complete, partial and no pooling
 
@@ -470,7 +462,7 @@ ggplot(mlm, aes(x = week, y = SMN7)) + geom_point() + stat_smooth(method="lm") +
 
 ## No Pooling
 
-Everyone is unqiue and we cannot learn from others. Leads to overfitting
+Everyone is unique and we cannot learn from others. Leads to overfitting
 
 ```{r}
 #| code-fold: true
@@ -493,9 +485,6 @@ ggplot(mlm, aes(x = week, y = SMN7, group = ID, colour = ID)) + stat_smooth(meth
 Partial pooling aka shrinkage provides the optimal amount of learning from others. Assumes people come from the same distribution but are distinct from one another.
 
 If you have a little data, then the safe bet is to look at the average. If you have a lot of data, you can ignore others.
-
-In a way, this is similar to Bayesian reasoning where learning is based on how much information you have about a person with other people serving as a prior.
-
 
 
 ## Basic Longitudinal Models
@@ -578,7 +567,7 @@ new.names <- codebook$new_name # get new column names
 soep <- read.csv("https://raw.githubusercontent.com/josh-jackson/longitudinal-2021/master/soepdata.csv")
 
  soep <-  soep %>% # read in data
-  dplyr::select(old.names) %>% # select the columns from our codebook
+  select(all_of(old.names)) %>% # select the columns from our codebook
   setNames(new.names) # rename columns with our new names
 
 
@@ -617,7 +606,7 @@ str(b5_soep_long)
 --------------
 
 
-```{r, echo = TRUE}
+```{r}
 #| code-fold: true
 b5_long <- b5_soep_long %>% 
   pivot_wider(names_from = trait, values_from = value) %>% 
@@ -696,11 +685,11 @@ plot(.) +
 coef = fixef + raneff
 
 ```{r, echo = TRUE}
-glimpse(ranef(mod.1))
+head(ranef(mod.1))
 ```
 
 ```{r, echo = TRUE}
-glimpse(coef(mod.1))
+head(coef(mod.1))
 ```
 
 ```{r, echo = TRUE}
@@ -726,7 +715,7 @@ example.aug
 
 ## Predicted scores
 
-Predictors are super important for evaluating our model as well as graphing. Lots of packages have these capabilities. My favorites are tidybayes (for brms), marginaleffects (for all), modelbased (for all) and insight both from easystats.
+Predictors are super important for evaluating our model as well as graphing. Lots of packages have these capabilities. My favorites are tidybayes (for brms), modelr (for all), marginaleffects (for all), and modelbased (for all).
 
 These extend the flexibility of predict (base) and similar functions from emmeans
 
@@ -738,21 +727,21 @@ estimate_prediction(mod.1) %>%
   head() 
 ```
 
-------------------------------------------------------------------------
-
-```{r, echo = TRUE}
-library(insight)
-get_predicted(mod.1) %>% 
-  head()
-
-```
 
 ------------------------------------------------------------------------
 
-```{r, echo = TRUE}
+```{r}
 library(marginaleffects)
 
 predictions(mod.1) %>%  head()
+```
+
+
+
+------
+
+```{r}
+predictions(mod.1, newdata = datagrid(ID = c(901, 2301)))
 ```
 
 
@@ -763,24 +752,22 @@ $${Y}_{ti} = \gamma_{00} + U_{0i}  + \varepsilon_{ti}$$
 
 This model is helpful in producing the simplest longitudinal model, one where it states: there is an average value $\gamma_{00}$ that people differ along $U_{0i}$ . Because time is not in the model it assumes people do not change. $\varepsilon_{ti}$ reflects variation around each person's predicted score ( $\gamma_{00} + U_{0i}$ ).
 
-## transitioning to longitudinal applications
+## Growth model
 
 We are going to fit a simple longitudinal model: a growth model. Growth model is just a fancy term for including TIME as our level 1 predictor where we are now creating lines for each person.
 
 
 ## A predictor in level 1
 
-Level 1 is where you have data that repeats within your grouping or clustering data. Is your cluster classrooms? Then students are level 1. People will be our cluster and observations are level 1.
+Level 1 is where you have data that repeats within your grouping or clustering data. 
 
-$${Y}_{ti} = \beta_{0i}  + \beta_{1i}X_{ti} + \varepsilon_{ti}$$
-
-Notice on the subscript of X that these predictors vary across cluster (i) and within the cluster (t) So if your clustering (i) is people, then t refers to different observations.
+$${Y}_{ti} = \beta_{0i}  + \beta_{1i}\text{time}_{ti} + \varepsilon_{ti}$$
 
 ------------------------------------------------------------------------
 
 Level 2 takes the parameters at level 1 and decomposes them into a fixed component ( $\gamma$ ) that reflects the average and, if desired, the individual deviations around that fixed effect (U).
 
-level 1 $${Y}_{ti} = \beta_{0i}  + \beta_{1i}X_{ti} + \varepsilon_{ti}$$
+level 1 $${Y}_{ti} = \beta_{0i}  + \beta_{1i}\text{time}_{ti} + \varepsilon_{ti}$$
 
 level 2 $${\beta}_{0i} = \gamma_{00} + U_{0i}$$\
 $${\beta}_{1i} = \gamma_{10}$$
@@ -790,7 +777,7 @@ $${\beta}_{1i} = \gamma_{10}$$
 
 Notice how if we constrain random effects this just turns into a simple regression
 
-level 1 $${Y}_{ti} = \beta_{0i}  + \beta_{1i}X_{ti} + \varepsilon_{ti}$$
+level 1 $${Y}_{ti} = \beta_{0i}  + \beta_{1i}\text{time}_{ti} + \varepsilon_{ti}$$
 
 level 2 $${\beta}_{0i} = \gamma_{00} $$\
 $${\beta}_{1i} = \gamma_{10}$$
@@ -798,18 +785,34 @@ $${\beta}_{1i} = \gamma_{10}$$
 
 ------------------------------------------------------------------------
 
-Combined equation: $${Y}_{ti} = \gamma_{00} + \gamma_{10} (X_{1i})+ U_{0i}  + \varepsilon_{ti}$$
+Combined equation: $${Y}_{ti} = \gamma_{00} + \gamma_{10} (\text{time}_{1i})+ U_{0i}  + \varepsilon_{ti}$$
 
 Because we have a level 1 time predictor in the model, we are now asking the question, how does time influence scores on our DV? Because all regressions are linear by default, it asks if there is an association such that as time increases does the DV? This describes a trajectory.
 
+
+## The role of time
+
+- If we change the time variable, we change the interpretation of the growth curve (age vs time in study).
+
+- As with all regressions, zero is important. 
+
+- Our time variable can be categorical or continuous, most often it is centered around some meaningful time (initial status, average age, etc). 
+
+
 ## Including a random slope
 
-level 1 $${Y}_{ti} = \beta_{0i}  + \beta_{1i}X_{ti} + \varepsilon_{ti}$$
+level 1 $${Y}_{ti} = \beta_{0i}  + \beta_{1i}\text{time}_{ti} + \varepsilon_{ti}$$
 
 level 2 $${\beta}_{0i} = \gamma_{00} + U_{0i}$$\
-$${\beta}_{1i} = \gamma_{10}+ U_{1i}$$ combined: $${Y}_{ti} = \gamma_{00} + \gamma_{10}(X_{ti})+ U_{0i} + U_{1i}(X_{ti}) + \varepsilon_{ti}$$
 
-$${Y}_{ti} = (\gamma_{00} + U_{0i}) + (\gamma_{10}+  U_{1i})X_{ti} + \varepsilon_{ti}$$
+$${\beta}_{1i} = \gamma_{10}+ U_{1i}$$ 
+
+----------------
+
+
+combined: $${Y}_{ti} = \gamma_{00} + \gamma_{10}(\text{time}_{ti})+ U_{0i} + U_{1i}(\text{time}_{ti}) + \varepsilon_{ti}$$
+
+$${Y}_{ti} = (\gamma_{00} + U_{0i}) + (\gamma_{10}+  U_{1i})\text{time}_{ti} + \varepsilon_{ti}$$
 
 ------------------------------------------------------------------------
 
