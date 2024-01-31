@@ -965,9 +965,25 @@ Fixed effects:
 (Intercept) 4.760256   0.005478   868.9</code></pre>
 </div>
 </div>
-</section>
-<section class="slide level2">
-
+<table style="width:11%;">
+<colgroup>
+<col style="width: 11%">
+</colgroup>
+<tbody>
+<tr class="odd">
+<td>marginal covariance has compound symmetry</td>
+</tr>
+<tr class="even">
+<td><span class="math display">\[\Sigma_i = \begin{bmatrix}
+\sigma_{u_0}^2 + \sigma^2 &amp; \sigma_{u_0}^2 &amp; \cdot &amp; \sigma_{u_0}^2 \\
+\sigma_{u_0}^2 &amp; \sigma_{u_0}^2 + \sigma^2 &amp; \cdot &amp; \cdot \\
+\cdot &amp; \cdot &amp; \cdot &amp; \cdot \\
+\cdot &amp; \cdot &amp; \cdot &amp; \cdot \\
+\sigma_{u_0}^2 &amp; \cdot &amp; \cdot &amp; \sigma_{u_0}^2 + \sigma^2
+\end{bmatrix}\]</span></td>
+</tr>
+</tbody>
+</table>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb21"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb21-1"><a href="#cb21-1"></a><span class="fu">library</span>(parameters) </span>
 <span id="cb21-2"><a href="#cb21-2"></a></span>
@@ -18198,40 +18214,81 @@ ID    |  5201 | (Intercept) |        0.59 | 0.24 | [ 0.12, 1.06]</code></pre>
 </section>
 <section id="residuals" class="slide level2">
 <h2>Residuals</h2>
-<p>To get residuals and fitted scores</p>
 <div class="cell">
 <details>
 <summary>Code</summary>
 <div class="sourceCode cell-code" id="cb34"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb34-1"><a href="#cb34-1"></a><span class="fu">library</span>(broom.mixed)</span>
 <span id="cb34-2"><a href="#cb34-2"></a>example.aug<span class="ot">&lt;-</span> <span class="fu">augment</span>(mod<span class="fl">.1</span>, <span class="at">data =</span> b5_long)</span>
-<span id="cb34-3"><a href="#cb34-3"></a></span>
-<span id="cb34-4"><a href="#cb34-4"></a>example.aug</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb34-3"><a href="#cb34-3"></a><span class="fu">describe</span>(example.aug)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-stdout">
-<pre><code># A tibble: 22,081 × 21
-   Procedural__SID year    DOB   Sex     A     C     E     N     O ID    .fitted
-             &lt;dbl&gt; &lt;chr&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;fct&gt;   &lt;dbl&gt;
- 1             901 2005   1951     2  4.67  5     5     4     4    901      4.90
- 2             901 2009   1951     2  4.33  5     5     4.67  4    901      4.90
- 3             901 2013   1951     2  4.67  5     5     4.33  3.33 901      4.90
- 4            2301 2005   1946     1  5.67  5.67  5     4.33  4.33 2301     5.09
- 5            2301 2009   1946     1  5.67  5     4     5.33  5    2301     5.09
- 6            2301 2013   1946     1  4.67  5.33  5.33  3.67  5    2301     5.09
- 7            2302 2005   1946     2  4.67  4.67  4.67  3.67  5    2302     5.03
- 8            2302 2009   1946     2  4     6     5.33  3     4.33 2302     5.03
- 9            2302 2013   1946     2  3.33  5     4.67  3     5.67 2302     5.03
-10            4701 2005   1919     2  4     4.33  4.67  3.67  3    4701     4.72
-# ℹ 22,071 more rows
-# ℹ 10 more variables: .resid &lt;dbl&gt;, .hat &lt;dbl&gt;, .cooksd &lt;dbl&gt;, .fixed &lt;dbl&gt;,
-#   .mu &lt;dbl&gt;, .offset &lt;dbl&gt;, .sqrtXwt &lt;dbl&gt;, .sqrtrwt &lt;dbl&gt;, .weights &lt;dbl&gt;,
-#   .wtres &lt;dbl&gt;</code></pre>
+<pre><code>                vars     n       mean         sd     median    trimmed
+Procedural__SID    1 22081 3106626.58 2385971.41 2816702.00 2858756.42
+year*              2 22081       1.93       0.78       2.00       1.92
+DOB                3 22081    1958.01      16.74    1958.00    1958.01
+Sex                4 22081       1.53       0.50       2.00       1.53
+A                  5 22079       4.74       0.73       4.67       4.74
+C                  6 22081       4.76       0.66       4.67       4.76
+E                  7 22075       4.88       0.80       5.00       4.89
+N                  8 22074       4.21       0.85       4.33       4.20
+O                  9 22068       4.48       1.20       4.33       4.50
+ID*               10 22081    6367.27    3699.52    6459.00    6389.47
+.fitted           11 22081       4.76       0.27       4.77       4.76
+.resid            12 22081       0.00       0.49       0.03       0.00
+.hat              13 22081       0.21       0.02       0.19       0.21
+.cooksd           14 22081       0.27       0.63       0.06       0.13
+.fixed            15 22081       4.76       0.00       4.76       4.76
+.mu               16 22062       4.76       0.27       4.77       4.76
+.offset           17 22062       0.00       0.00       0.00       0.00
+.sqrtXwt          18 22062       1.00       0.00       1.00       1.00
+.sqrtrwt          19 22062       1.00       0.00       1.00       1.00
+.weights          20 22062       1.00       0.00       1.00       1.00
+.wtres            21 22062       0.00       0.49       0.03       0.00
+                       mad     min        max      range  skew kurtosis
+Procedural__SID 3238591.44  901.00 8280702.00 8279801.00  0.68    -0.34
+year*                 1.48    1.00       3.00       2.00  0.12    -1.36
+DOB                  19.27 1909.00    1991.00      82.00 -0.03    -0.78
+Sex                   0.00    1.00       2.00       1.00 -0.11    -1.99
+A                     0.49    1.00       7.00       6.00 -0.10     0.86
+C                     0.49    1.00       7.00       6.00 -0.28     2.47
+E                     0.74    1.00       7.00       6.00 -0.21     0.56
+N                     0.99    1.00       7.00       6.00  0.09     0.12
+O                     0.99    1.00       7.00       6.00 -0.16    -0.24
+ID*                4901.48    1.00   12566.00   12565.00 -0.06    -1.22
+.fitted               0.20    3.36       6.06       2.70 -0.21     1.37
+.resid                0.38   -3.45       2.60       6.05 -0.26     3.11
+.hat                  0.00    0.19       0.31       0.12  0.77    -1.27
+.cooksd               0.08    0.00      15.84      15.84  8.11   115.91
+.fixed                0.00    4.76       4.76       0.00  -Inf      NaN
+.mu                   0.20    3.36       6.06       2.70 -0.21     1.37
+.offset               0.00    0.00       0.00       0.00   NaN      NaN
+.sqrtXwt              0.00    1.00       1.00       0.00   NaN      NaN
+.sqrtrwt              0.00    1.00       1.00       0.00   NaN      NaN
+.weights              0.00    1.00       1.00       0.00   NaN      NaN
+.wtres                0.38   -3.45       2.60       6.05 -0.27     3.12
+                      se
+Procedural__SID 16056.68
+year*               0.01
+DOB                 0.11
+Sex                 0.00
+A                   0.00
+C                   0.00
+E                   0.01
+N                   0.01
+O                   0.01
+ID*                24.90
+.fitted             0.00
+.resid              0.00
+.hat                0.00
+.cooksd             0.00
+.fixed              0.00
+.mu                 0.00
+.offset             0.00
+.sqrtXwt            0.00
+.sqrtrwt            0.00
+.weights            0.00
+.wtres              0.00</code></pre>
 </div>
-<details>
-<summary>Code</summary>
-<div class="sourceCode cell-code" id="cb36"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb36-1"><a href="#cb36-1"></a><span class="co"># .fitted    = predicted values</span></span>
-<span id="cb36-2"><a href="#cb36-2"></a><span class="co"># .resid    = residuals/errors</span></span>
-<span id="cb36-3"><a href="#cb36-3"></a><span class="co"># .fixed     = predicted values with no random effects</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</details>
 </div>
 </section>
 <section id="predicted-scores" class="slide level2">
@@ -18242,9 +18299,9 @@ ID    |  5201 | (Intercept) |        0.59 | 0.24 | [ 0.12, 1.06]</code></pre>
 <section class="slide level2">
 
 <div class="cell">
-<div class="sourceCode cell-code" id="cb37"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb37-1"><a href="#cb37-1"></a><span class="fu">library</span>(modelbased)</span>
-<span id="cb37-2"><a href="#cb37-2"></a><span class="fu">estimate_prediction</span>(mod<span class="fl">.1</span>) <span class="sc">%&gt;%</span> </span>
-<span id="cb37-3"><a href="#cb37-3"></a>  <span class="fu">head</span>() </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb36"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb36-1"><a href="#cb36-1"></a><span class="fu">library</span>(modelbased)</span>
+<span id="cb36-2"><a href="#cb36-2"></a><span class="fu">estimate_prediction</span>(mod<span class="fl">.1</span>) <span class="sc">%&gt;%</span> </span>
+<span id="cb36-3"><a href="#cb36-3"></a>  <span class="fu">head</span>() </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>Model-based Prediction
 
@@ -18264,9 +18321,9 @@ Variable predicted: C</code></pre>
 <section class="slide level2">
 
 <div class="cell">
-<div class="sourceCode cell-code" id="cb39"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb39-1"><a href="#cb39-1"></a><span class="fu">library</span>(marginaleffects)</span>
-<span id="cb39-2"><a href="#cb39-2"></a></span>
-<span id="cb39-3"><a href="#cb39-3"></a><span class="fu">predictions</span>(mod<span class="fl">.1</span>) <span class="sc">%&gt;%</span>  <span class="fu">head</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb38"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb38-1"><a href="#cb38-1"></a><span class="fu">library</span>(marginaleffects)</span>
+<span id="cb38-2"><a href="#cb38-2"></a></span>
+<span id="cb38-3"><a href="#cb38-3"></a><span class="fu">predictions</span>(mod<span class="fl">.1</span>) <span class="sc">%&gt;%</span>  <span class="fu">head</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>
  Estimate Std. Error   z Pr(&gt;|z|)   S 2.5 % 97.5 %
@@ -18284,7 +18341,7 @@ Columns: rowid, estimate, std.error, statistic, p.value, s.value, conf.low, conf
 <section class="slide level2">
 
 <div class="cell">
-<div class="sourceCode cell-code" id="cb41"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb41-1"><a href="#cb41-1"></a><span class="fu">predictions</span>(mod<span class="fl">.1</span>, <span class="at">newdata =</span> <span class="fu">datagrid</span>(<span class="at">ID =</span> <span class="fu">c</span>(<span class="dv">901</span>, <span class="dv">2301</span>)))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb40"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb40-1"><a href="#cb40-1"></a><span class="fu">predictions</span>(mod<span class="fl">.1</span>, <span class="at">newdata =</span> <span class="fu">datagrid</span>(<span class="at">ID =</span> <span class="fu">c</span>(<span class="dv">901</span>, <span class="dv">2301</span>)))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>
    ID Estimate Std. Error   z Pr(&gt;|z|)   S 2.5 % 97.5 %
@@ -18362,11 +18419,13 @@ Columns: rowid, estimate, std.error, statistic, p.value, s.value, conf.low, conf
 <p><span class="math display">\[{\beta}_{1.26} = \gamma_{10} \pm U_{26}\]</span> Also call BLUPs or empirical bayes estimates</p>
 </section>
 <section id="slope-example" class="slide level2">
-<h2>slope example</h2>
+<h2>Slope example</h2>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb43"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb43-1"><a href="#cb43-1"></a>mod<span class="fl">.2</span> <span class="ot">&lt;-</span> <span class="fu">lmer</span>(C <span class="sc">~</span> <span class="dv">1</span> <span class="sc">+</span> year <span class="sc">+</span> (<span class="dv">1</span> <span class="sc">|</span> ID), <span class="at">data=</span>b5_long)</span>
-<span id="cb43-2"><a href="#cb43-2"></a></span>
-<span id="cb43-3"><a href="#cb43-3"></a><span class="fu">summary</span>(mod<span class="fl">.2</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb42"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb42-1"><a href="#cb42-1"></a>mod<span class="fl">.2</span> <span class="ot">&lt;-</span> <span class="fu">lmer</span>(C <span class="sc">~</span> <span class="dv">1</span> <span class="sc">+</span> year <span class="sc">+</span> (<span class="dv">1</span> <span class="sc">|</span> ID), <span class="at">data=</span>b5_long)</span>
+<span id="cb42-2"><a href="#cb42-2"></a><span class="fu">summary</span>(mod<span class="fl">.2</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 <div class="cell-output cell-output-stdout">
 <pre><code>Linear mixed model fit by REML ['lmerMod']
 Formula: C ~ 1 + year + (1 | ID)
@@ -18400,12 +18459,14 @@ year2013 -0.565  0.488</code></pre>
 <section class="slide level2">
 
 <div class="cell">
-<div class="sourceCode cell-code" id="cb45"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb45-1"><a href="#cb45-1"></a>b5_long<span class="ot">&lt;-</span> b5_long <span class="sc">%&gt;%</span>  </span>
-<span id="cb45-2"><a href="#cb45-2"></a>  <span class="fu">mutate</span>(<span class="at">year =</span> <span class="fu">as.numeric</span>(year))</span>
-<span id="cb45-3"><a href="#cb45-3"></a>  </span>
-<span id="cb45-4"><a href="#cb45-4"></a>mod<span class="fl">.3</span> <span class="ot">&lt;-</span> <span class="fu">lmer</span>(C <span class="sc">~</span> <span class="dv">1</span> <span class="sc">+</span> year <span class="sc">+</span> (<span class="dv">1</span> <span class="sc">|</span> ID), <span class="at">data=</span>b5_long)</span>
-<span id="cb45-5"><a href="#cb45-5"></a></span>
-<span id="cb45-6"><a href="#cb45-6"></a><span class="fu">summary</span>(mod<span class="fl">.3</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb44"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb44-1"><a href="#cb44-1"></a>b5_long<span class="ot">&lt;-</span> b5_long <span class="sc">%&gt;%</span>  </span>
+<span id="cb44-2"><a href="#cb44-2"></a>  <span class="fu">mutate</span>(<span class="at">year =</span> <span class="fu">as.numeric</span>(year))</span>
+<span id="cb44-3"><a href="#cb44-3"></a>  </span>
+<span id="cb44-4"><a href="#cb44-4"></a>mod<span class="fl">.3</span> <span class="ot">&lt;-</span> <span class="fu">lmer</span>(C <span class="sc">~</span> <span class="dv">1</span> <span class="sc">+</span> year <span class="sc">+</span> (<span class="dv">1</span> <span class="sc">|</span> ID), <span class="at">data=</span>b5_long)</span>
+<span id="cb44-5"><a href="#cb44-5"></a><span class="fu">summary</span>(mod<span class="fl">.3</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 <div class="cell-output cell-output-stdout">
 <pre><code>Linear mixed model fit by REML ['lmerMod']
 Formula: C ~ 1 + year + (1 | ID)
@@ -18438,13 +18499,15 @@ year -1.000</code></pre>
 
 <h3 id="the-importance-of-scaling-time">The importance of scaling time</h3>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb47"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb47-1"><a href="#cb47-1"></a>b5_long<span class="ot">&lt;-</span> b5_long <span class="sc">%&gt;%</span>  </span>
-<span id="cb47-2"><a href="#cb47-2"></a>  <span class="fu">mutate</span>(<span class="at">year.c =</span> (year <span class="sc">-</span> <span class="dv">2005</span>))</span>
-<span id="cb47-3"><a href="#cb47-3"></a>  </span>
-<span id="cb47-4"><a href="#cb47-4"></a>  </span>
-<span id="cb47-5"><a href="#cb47-5"></a>mod<span class="fl">.4</span> <span class="ot">&lt;-</span> <span class="fu">lmer</span>(C <span class="sc">~</span> <span class="dv">1</span> <span class="sc">+</span> year.c <span class="sc">+</span> (<span class="dv">1</span> <span class="sc">|</span> ID), <span class="at">data=</span>b5_long)</span>
-<span id="cb47-6"><a href="#cb47-6"></a></span>
-<span id="cb47-7"><a href="#cb47-7"></a><span class="fu">summary</span>(mod<span class="fl">.4</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb46"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb46-1"><a href="#cb46-1"></a>b5_long<span class="ot">&lt;-</span> b5_long <span class="sc">%&gt;%</span>  </span>
+<span id="cb46-2"><a href="#cb46-2"></a>  <span class="fu">mutate</span>(<span class="at">year.c =</span> (year <span class="sc">-</span> <span class="dv">2005</span>))</span>
+<span id="cb46-3"><a href="#cb46-3"></a>  </span>
+<span id="cb46-4"><a href="#cb46-4"></a>  </span>
+<span id="cb46-5"><a href="#cb46-5"></a>mod<span class="fl">.4</span> <span class="ot">&lt;-</span> <span class="fu">lmer</span>(C <span class="sc">~</span> <span class="dv">1</span> <span class="sc">+</span> year.c <span class="sc">+</span> (<span class="dv">1</span> <span class="sc">|</span> ID), <span class="at">data=</span>b5_long)</span>
+<span id="cb46-6"><a href="#cb46-6"></a><span class="fu">summary</span>(mod<span class="fl">.4</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 <div class="cell-output cell-output-stdout">
 <pre><code>Linear mixed model fit by REML ['lmerMod']
 Formula: C ~ 1 + year.c + (1 | ID)
@@ -18477,32 +18540,35 @@ year.c -0.635</code></pre>
 <h2>Visualizing results (quickly)</h2>
 <p>There are many ways to do this. The parameters package paired with the see package, both from the easystats package, are useful in this regard.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb49"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb49-1"><a href="#cb49-1"></a><span class="fu">library</span>(parameters)</span>
-<span id="cb49-2"><a href="#cb49-2"></a><span class="fu">library</span>(see)</span>
-<span id="cb49-3"><a href="#cb49-3"></a></span>
-<span id="cb49-4"><a href="#cb49-4"></a>result <span class="ot">&lt;-</span> <span class="fu">model_parameters</span>(mod<span class="fl">.4</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb48"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb48-1"><a href="#cb48-1"></a><span class="fu">library</span>(parameters)</span>
+<span id="cb48-2"><a href="#cb48-2"></a><span class="fu">library</span>(see)</span>
+<span id="cb48-3"><a href="#cb48-3"></a></span>
+<span id="cb48-4"><a href="#cb48-4"></a>result <span class="ot">&lt;-</span> <span class="fu">model_parameters</span>(mod<span class="fl">.4</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 </div>
 </section>
 <section class="slide level2">
 
 <div class="cell">
-<div class="sourceCode cell-code" id="cb50"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb50-1"><a href="#cb50-1"></a><span class="fu">plot</span>(result)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb49"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb49-1"><a href="#cb49-1"></a><span class="fu">plot</span>(result)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 
 </div>
 <img data-src="mlm-2_files/figure-revealjs/unnamed-chunk-39-1.png" width="960" class="r-stretch"></section>
 <section class="slide level2">
 
 <div class="cell">
-<div class="sourceCode cell-code" id="cb51"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb51-1"><a href="#cb51-1"></a>result2 <span class="ot">&lt;-</span> <span class="fu">simulate_parameters</span>(mod<span class="fl">.4</span>)</span>
-<span id="cb51-2"><a href="#cb51-2"></a><span class="fu">plot</span>(result2, <span class="at">show_intercept =</span> <span class="cn">FALSE</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb50"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb50-1"><a href="#cb50-1"></a>result2 <span class="ot">&lt;-</span> <span class="fu">simulate_parameters</span>(mod<span class="fl">.4</span>)</span>
+<span id="cb50-2"><a href="#cb50-2"></a><span class="fu">plot</span>(result2, <span class="at">show_intercept =</span> <span class="cn">FALSE</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 
 </div>
 <img data-src="mlm-2_files/figure-revealjs/unnamed-chunk-40-1.png" width="960" class="r-stretch"></section>
 <section class="slide level2">
 
 <div class="cell">
-<div class="sourceCode cell-code" id="cb52"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb52-1"><a href="#cb52-1"></a>result3 <span class="ot">&lt;-</span> <span class="fu">model_parameters</span>(mod<span class="fl">.4</span>,  <span class="at">group_level =</span> <span class="cn">TRUE</span>)</span>
-<span id="cb52-2"><a href="#cb52-2"></a><span class="fu">plot</span>(result3)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb51"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb51-1"><a href="#cb51-1"></a>result3 <span class="ot">&lt;-</span> <span class="fu">model_parameters</span>(mod<span class="fl">.4</span>,  <span class="at">group_level =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb51-2"><a href="#cb51-2"></a><span class="fu">plot</span>(result3)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 
 </div>
 <img data-src="mlm-2_files/figure-revealjs/unnamed-chunk-41-1.png" width="960" class="r-stretch"></section>
@@ -18522,9 +18588,9 @@ year.c -0.635</code></pre>
 
 <p>Some packages do so much behind the scenes it is hard to know what is happening</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb53"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb53-1"><a href="#cb53-1"></a><span class="fu">library</span>(ggeffects)</span>
-<span id="cb53-2"><a href="#cb53-2"></a>p.mod4<span class="ot">&lt;-</span><span class="fu">ggpredict</span>(mod<span class="fl">.4</span>, <span class="st">"year.c"</span>)</span>
-<span id="cb53-3"><a href="#cb53-3"></a>p.mod4</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb52"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb52-1"><a href="#cb52-1"></a><span class="fu">library</span>(ggeffects)</span>
+<span id="cb52-2"><a href="#cb52-2"></a>p.mod4<span class="ot">&lt;-</span><span class="fu">ggpredict</span>(mod<span class="fl">.4</span>, <span class="st">"year.c"</span>)</span>
+<span id="cb52-3"><a href="#cb52-3"></a>p.mod4</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code># Predicted values of C
 
@@ -18543,7 +18609,7 @@ Adjusted for:
 <section class="slide level2">
 
 <div class="cell">
-<div class="sourceCode cell-code" id="cb55"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb55-1"><a href="#cb55-1"></a><span class="fu">plot</span>(p.mod4)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb54"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb54-1"><a href="#cb54-1"></a><span class="fu">plot</span>(p.mod4)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 
 </div>
 <img data-src="mlm-2_files/figure-revealjs/unnamed-chunk-43-1.png" width="960" class="r-stretch"></section>
@@ -18551,8 +18617,8 @@ Adjusted for:
 
 <p>If you want you can also get predicted lines for a particular individual. Along with prediction CI</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb56"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb56-1"><a href="#cb56-1"></a>p.r.mod2 <span class="ot">&lt;-</span> <span class="fu">ggpredict</span>(mod<span class="fl">.4</span>, <span class="st">"year.c"</span>, <span class="at">type =</span> <span class="st">"random"</span>, <span class="at">condition =</span> <span class="fu">c</span>(<span class="at">Subject =</span> <span class="dv">97</span>))</span>
-<span id="cb56-2"><a href="#cb56-2"></a>p.r.mod2</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb55"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb55-1"><a href="#cb55-1"></a>p.r.mod2 <span class="ot">&lt;-</span> <span class="fu">ggpredict</span>(mod<span class="fl">.4</span>, <span class="st">"year.c"</span>, <span class="at">type =</span> <span class="st">"random"</span>, <span class="at">condition =</span> <span class="fu">c</span>(<span class="at">ID =</span> <span class="dv">97</span>))</span>
+<span id="cb55-2"><a href="#cb55-2"></a>p.r.mod2</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code># Predicted values of C
 
@@ -18560,10 +18626,7 @@ year.c | Predicted |       95% CI
 ---------------------------------
      0 |      4.75 | [3.68, 5.83]
      4 |      4.76 | [3.69, 5.84]
-     8 |      4.77 | [3.69, 5.84]
-
-Adjusted for:
-* ID = 0 (population-level)</code></pre>
+     8 |      4.77 | [3.69, 5.84]</code></pre>
 </div>
 </div>
 <p><span class="math display">\[\hat{Y}_{ti} = [\gamma_{00} + U_{0i}] + [\gamma_{10}+U_{1i} ]  * Time_{ti}\]</span></p>
@@ -18571,15 +18634,15 @@ Adjusted for:
 <section class="slide level2">
 
 <div class="cell">
-<div class="sourceCode cell-code" id="cb58"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb58-1"><a href="#cb58-1"></a><span class="fu">plot</span>(p.r.mod2)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb57"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb57-1"><a href="#cb57-1"></a><span class="fu">plot</span>(p.r.mod2)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 
 </div>
 <img data-src="mlm-2_files/figure-revealjs/unnamed-chunk-45-1.png" width="960" class="r-stretch"></section>
 <section class="slide level2">
 
 <div class="cell">
-<div class="sourceCode cell-code" id="cb59"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb59-1"><a href="#cb59-1"></a>p.r.mod3 <span class="ot">&lt;-</span> <span class="fu">ggpredict</span>(mod<span class="fl">.4</span>, <span class="fu">c</span>(<span class="st">"year.c"</span>,<span class="st">"ID[sample=9]"</span>), <span class="at">type =</span> <span class="st">"random"</span>)</span>
-<span id="cb59-2"><a href="#cb59-2"></a><span class="fu">plot</span>(p.r.mod3)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb58"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb58-1"><a href="#cb58-1"></a>p.r.mod3 <span class="ot">&lt;-</span> <span class="fu">ggpredict</span>(mod<span class="fl">.4</span>, <span class="fu">c</span>(<span class="st">"year.c"</span>,<span class="st">"ID[sample=9]"</span>), <span class="at">type =</span> <span class="st">"random"</span>)</span>
+<span id="cb58-2"><a href="#cb58-2"></a><span class="fu">plot</span>(p.r.mod3)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 
 </div>
 <img data-src="mlm-2_files/figure-revealjs/unnamed-chunk-46-1.png" width="960" class="r-stretch"></section>
@@ -18604,9 +18667,12 @@ Adjusted for:
 <li>Start with a dataset that you created your model from and feed that to data_grid. Then we need to specify what variables you want to be constant and what variables you want to vary.</li>
 </ol>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb60"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb60-1"><a href="#cb60-1"></a><span class="fu">library</span>(modelr)</span>
-<span id="cb60-2"><a href="#cb60-2"></a>b5_long <span class="sc">%&gt;%</span> </span>
-<span id="cb60-3"><a href="#cb60-3"></a>  <span class="fu">data_grid</span>(<span class="at">year.c =</span> <span class="fu">seq_range</span>(year.c, <span class="at">n =</span> <span class="dv">10</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb59"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb59-1"><a href="#cb59-1"></a><span class="fu">library</span>(modelr)</span>
+<span id="cb59-2"><a href="#cb59-2"></a>b5_long <span class="sc">%&gt;%</span> </span>
+<span id="cb59-3"><a href="#cb59-3"></a>  <span class="fu">data_grid</span>(<span class="at">year.c =</span> <span class="fu">seq_range</span>(year.c, <span class="at">n =</span> <span class="dv">10</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 <div class="cell-output cell-output-stdout">
 <pre><code># A tibble: 10 × 1
    year.c
@@ -18627,8 +18693,11 @@ Adjusted for:
 <section class="slide level2">
 
 <div class="cell">
-<div class="sourceCode cell-code" id="cb62"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb62-1"><a href="#cb62-1"></a>b5_long <span class="sc">%&gt;%</span> </span>
-<span id="cb62-2"><a href="#cb62-2"></a>  <span class="fu">data_grid</span>(<span class="at">year.c =</span> <span class="fu">seq_range</span>(year.c, <span class="at">n =</span> <span class="dv">10</span>), <span class="at">.model =</span> b5_long)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb61"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb61-1"><a href="#cb61-1"></a>b5_long <span class="sc">%&gt;%</span> </span>
+<span id="cb61-2"><a href="#cb61-2"></a>  <span class="fu">data_grid</span>(<span class="at">year.c =</span> <span class="fu">seq_range</span>(year.c, <span class="at">n =</span> <span class="dv">10</span>), <span class="at">.model =</span> b5_long)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 <div class="cell-output cell-output-stdout">
 <pre><code># A tibble: 49,680 × 10
    year.c  year   DOB   Sex     A     C     E     N     O ID     
@@ -18650,31 +18719,38 @@ Adjusted for:
 <section class="slide level2">
 
 <div class="cell">
-<div class="sourceCode cell-code" id="cb64"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb64-1"><a href="#cb64-1"></a>test.c <span class="ot">&lt;-</span> b5_long <span class="sc">%&gt;%</span> </span>
-<span id="cb64-2"><a href="#cb64-2"></a>  <span class="fu">data_grid</span>(<span class="at">year.c =</span> <span class="fu">seq_range</span>(year.c, <span class="at">n =</span> <span class="dv">10</span>), <span class="at">.model =</span> b5_long) <span class="sc">%&gt;%</span> </span>
-<span id="cb64-3"><a href="#cb64-3"></a>    <span class="fu">add_predictions</span>(mod<span class="fl">.4</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb63"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb63-1"><a href="#cb63-1"></a>test.c <span class="ot">&lt;-</span> b5_long <span class="sc">%&gt;%</span> </span>
+<span id="cb63-2"><a href="#cb63-2"></a>  <span class="fu">data_grid</span>(<span class="at">year.c =</span> <span class="fu">seq_range</span>(year.c, <span class="at">n =</span> <span class="dv">10</span>), <span class="at">.model =</span> b5_long) <span class="sc">%&gt;%</span> </span>
+<span id="cb63-3"><a href="#cb63-3"></a>    <span class="fu">add_predictions</span>(mod<span class="fl">.4</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 </div>
 </section>
 <section class="slide level2">
 
 <div class="cell">
-<div class="sourceCode cell-code" id="cb65"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb65-1"><a href="#cb65-1"></a>b5_long <span class="sc">%&gt;%</span> </span>
-<span id="cb65-2"><a href="#cb65-2"></a>  <span class="fu">data_grid</span>(<span class="at">year.c =</span> <span class="fu">seq_range</span>(year.c, <span class="at">n =</span> <span class="dv">10</span>), <span class="at">.model =</span> b5_long) <span class="sc">%&gt;%</span> </span>
-<span id="cb65-3"><a href="#cb65-3"></a>    <span class="fu">add_predictions</span>(mod<span class="fl">.4</span>) <span class="sc">%&gt;%</span> </span>
-<span id="cb65-4"><a href="#cb65-4"></a>   <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">y =</span> pred, <span class="at">x =</span> year.c, <span class="at">group =</span> ID)) <span class="sc">+</span></span>
-<span id="cb65-5"><a href="#cb65-5"></a>  <span class="fu">geom_line</span>(<span class="at">alpha =</span> .<span class="dv">2</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb64"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb64-1"><a href="#cb64-1"></a>b5_long <span class="sc">%&gt;%</span> </span>
+<span id="cb64-2"><a href="#cb64-2"></a>  <span class="fu">data_grid</span>(<span class="at">year.c =</span> <span class="fu">seq_range</span>(year.c, <span class="at">n =</span> <span class="dv">10</span>), <span class="at">.model =</span> b5_long) <span class="sc">%&gt;%</span> </span>
+<span id="cb64-3"><a href="#cb64-3"></a>    <span class="fu">add_predictions</span>(mod<span class="fl">.4</span>) <span class="sc">%&gt;%</span> </span>
+<span id="cb64-4"><a href="#cb64-4"></a>   <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">y =</span> pred, <span class="at">x =</span> year.c, <span class="at">group =</span> ID)) <span class="sc">+</span></span>
+<span id="cb64-5"><a href="#cb64-5"></a>  <span class="fu">geom_line</span>(<span class="at">alpha =</span> .<span class="dv">2</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 
 </div>
 <img data-src="mlm-2_files/figure-revealjs/unnamed-chunk-50-1.png" width="960" class="r-stretch"></section>
 <section class="slide level2">
 
 <div class="cell">
-<div class="sourceCode cell-code" id="cb66"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb66-1"><a href="#cb66-1"></a>fix_eff <span class="ot">&lt;-</span> b5_long <span class="sc">%&gt;%</span> </span>
-<span id="cb66-2"><a href="#cb66-2"></a>  <span class="fu">data_grid</span>(<span class="at">year.c =</span> <span class="fu">seq_range</span>(year.c, <span class="at">n =</span> <span class="dv">10</span>), <span class="at">.model =</span> b5_long) <span class="sc">%&gt;%</span> </span>
-<span id="cb66-3"><a href="#cb66-3"></a>  <span class="fu">add_predictions</span>(mod<span class="fl">.4</span>) <span class="sc">%&gt;%</span> </span>
-<span id="cb66-4"><a href="#cb66-4"></a>  <span class="fu">group_by</span>(year.c) <span class="sc">%&gt;%</span> </span>
-<span id="cb66-5"><a href="#cb66-5"></a>  dplyr<span class="sc">::</span><span class="fu">summarize</span>(<span class="at">pred =</span> <span class="fu">mean</span>(pred)) </span>
-<span id="cb66-6"><a href="#cb66-6"></a>fix_eff</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb65"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb65-1"><a href="#cb65-1"></a> <span class="co">#| code-fold: true</span></span>
+<span id="cb65-2"><a href="#cb65-2"></a>fix_eff <span class="ot">&lt;-</span> b5_long <span class="sc">%&gt;%</span> </span>
+<span id="cb65-3"><a href="#cb65-3"></a>  <span class="fu">data_grid</span>(<span class="at">year.c =</span> <span class="fu">seq_range</span>(year.c, <span class="at">n =</span> <span class="dv">10</span>), <span class="at">.model =</span> b5_long) <span class="sc">%&gt;%</span> </span>
+<span id="cb65-4"><a href="#cb65-4"></a>  <span class="fu">add_predictions</span>(mod<span class="fl">.4</span>) <span class="sc">%&gt;%</span> </span>
+<span id="cb65-5"><a href="#cb65-5"></a>  <span class="fu">group_by</span>(year.c) <span class="sc">%&gt;%</span> </span>
+<span id="cb65-6"><a href="#cb65-6"></a>  dplyr<span class="sc">::</span><span class="fu">summarize</span>(<span class="at">pred =</span> <span class="fu">mean</span>(pred)) </span>
+<span id="cb65-7"><a href="#cb65-7"></a>fix_eff</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code># A tibble: 10 × 2
    year.c  pred
@@ -18697,13 +18773,13 @@ Adjusted for:
 <div class="cell">
 <details>
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb68"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb68-1"><a href="#cb68-1"></a>b5_long <span class="sc">%&gt;%</span> </span>
-<span id="cb68-2"><a href="#cb68-2"></a>  <span class="fu">data_grid</span>(<span class="at">year.c =</span> <span class="fu">seq_range</span>(year.c, <span class="at">n =</span> <span class="dv">10</span>), <span class="at">.model =</span> b5_long) <span class="sc">%&gt;%</span> </span>
-<span id="cb68-3"><a href="#cb68-3"></a>  <span class="fu">add_predictions</span>(mod<span class="fl">.4</span>) <span class="sc">%&gt;%</span> </span>
-<span id="cb68-4"><a href="#cb68-4"></a>  <span class="fu">group_by</span>(year.c) <span class="sc">%&gt;%</span> </span>
-<span id="cb68-5"><a href="#cb68-5"></a>  dplyr<span class="sc">::</span><span class="fu">summarize</span>(<span class="at">pred =</span> <span class="fu">mean</span>(pred)) <span class="sc">%&gt;%</span> </span>
-<span id="cb68-6"><a href="#cb68-6"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">y =</span> pred, <span class="at">x =</span> year.c)) <span class="sc">+</span></span>
-<span id="cb68-7"><a href="#cb68-7"></a>  <span class="fu">geom_line</span>() </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb67"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb67-1"><a href="#cb67-1"></a>b5_long <span class="sc">%&gt;%</span> </span>
+<span id="cb67-2"><a href="#cb67-2"></a>  <span class="fu">data_grid</span>(<span class="at">year.c =</span> <span class="fu">seq_range</span>(year.c, <span class="at">n =</span> <span class="dv">10</span>), <span class="at">.model =</span> b5_long) <span class="sc">%&gt;%</span> </span>
+<span id="cb67-3"><a href="#cb67-3"></a>  <span class="fu">add_predictions</span>(mod<span class="fl">.4</span>) <span class="sc">%&gt;%</span> </span>
+<span id="cb67-4"><a href="#cb67-4"></a>  <span class="fu">group_by</span>(year.c) <span class="sc">%&gt;%</span> </span>
+<span id="cb67-5"><a href="#cb67-5"></a>  dplyr<span class="sc">::</span><span class="fu">summarize</span>(<span class="at">pred =</span> <span class="fu">mean</span>(pred)) <span class="sc">%&gt;%</span> </span>
+<span id="cb67-6"><a href="#cb67-6"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">y =</span> pred, <span class="at">x =</span> year.c)) <span class="sc">+</span></span>
+<span id="cb67-7"><a href="#cb67-7"></a>  <span class="fu">geom_line</span>() </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 
 </div>
@@ -18713,13 +18789,13 @@ Adjusted for:
 <div class="cell">
 <details>
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb69"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb69-1"><a href="#cb69-1"></a>b5_long <span class="sc">%&gt;%</span> </span>
-<span id="cb69-2"><a href="#cb69-2"></a>  <span class="fu">data_grid</span>(<span class="at">year.c =</span> <span class="fu">seq_range</span>(year.c, <span class="at">n =</span> <span class="dv">10</span>), <span class="at">.model =</span> b5_long) <span class="sc">%&gt;%</span> </span>
-<span id="cb69-3"><a href="#cb69-3"></a>    <span class="fu">add_predictions</span>(mod<span class="fl">.4</span>) <span class="sc">%&gt;%</span> </span>
-<span id="cb69-4"><a href="#cb69-4"></a>   <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">y =</span> pred, <span class="at">x =</span> year.c)) <span class="sc">+</span></span>
-<span id="cb69-5"><a href="#cb69-5"></a>  <span class="fu">geom_line</span>(<span class="fu">aes</span>(<span class="at">group =</span> ID), <span class="at">alpha =</span> .<span class="dv">2</span>) <span class="sc">+</span></span>
-<span id="cb69-6"><a href="#cb69-6"></a>  <span class="fu">geom_line</span>(<span class="at">data =</span> fix_eff, <span class="at">color =</span> <span class="st">"blue"</span>, <span class="at">size =</span> <span class="dv">3</span>) <span class="sc">+</span></span>
-<span id="cb69-7"><a href="#cb69-7"></a>  <span class="fu">ylim</span>(<span class="fl">4.5</span>,<span class="dv">5</span> )</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb68"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb68-1"><a href="#cb68-1"></a>b5_long <span class="sc">%&gt;%</span> </span>
+<span id="cb68-2"><a href="#cb68-2"></a>  <span class="fu">data_grid</span>(<span class="at">year.c =</span> <span class="fu">seq_range</span>(year.c, <span class="at">n =</span> <span class="dv">10</span>), <span class="at">.model =</span> b5_long) <span class="sc">%&gt;%</span> </span>
+<span id="cb68-3"><a href="#cb68-3"></a>    <span class="fu">add_predictions</span>(mod<span class="fl">.4</span>) <span class="sc">%&gt;%</span> </span>
+<span id="cb68-4"><a href="#cb68-4"></a>   <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">y =</span> pred, <span class="at">x =</span> year.c)) <span class="sc">+</span></span>
+<span id="cb68-5"><a href="#cb68-5"></a>  <span class="fu">geom_line</span>(<span class="fu">aes</span>(<span class="at">group =</span> ID), <span class="at">alpha =</span> .<span class="dv">2</span>) <span class="sc">+</span></span>
+<span id="cb68-6"><a href="#cb68-6"></a>  <span class="fu">geom_line</span>(<span class="at">data =</span> fix_eff, <span class="at">color =</span> <span class="st">"blue"</span>, <span class="at">size =</span> <span class="dv">3</span>) <span class="sc">+</span></span>
+<span id="cb68-7"><a href="#cb68-7"></a>  <span class="fu">ylim</span>(<span class="fl">4.5</span>,<span class="dv">5</span> )</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 
 </div>
@@ -18735,13 +18811,13 @@ Adjusted for:
 <section class="slide level2">
 
 <div class="cell">
-<div class="sourceCode cell-code" id="cb70"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb70-1"><a href="#cb70-1"></a>b5_long<span class="ot">&lt;-</span> b5_long <span class="sc">%&gt;%</span>  </span>
-<span id="cb70-2"><a href="#cb70-2"></a>  <span class="fu">mutate</span>(<span class="at">year.c =</span> (year <span class="sc">-</span> <span class="dv">2005</span>))</span>
-<span id="cb70-3"><a href="#cb70-3"></a>  </span>
-<span id="cb70-4"><a href="#cb70-4"></a>  </span>
-<span id="cb70-5"><a href="#cb70-5"></a>mod<span class="fl">.6</span> <span class="ot">&lt;-</span> <span class="fu">lmer</span>(C <span class="sc">~</span> <span class="dv">1</span> <span class="sc">+</span> year.c <span class="sc">+</span> (<span class="dv">1</span> <span class="sc">+</span> year.c  <span class="sc">|</span> ID), <span class="at">data=</span>b5_long)</span>
-<span id="cb70-6"><a href="#cb70-6"></a></span>
-<span id="cb70-7"><a href="#cb70-7"></a><span class="fu">summary</span>(mod<span class="fl">.6</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb69"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb69-1"><a href="#cb69-1"></a>b5_long<span class="ot">&lt;-</span> b5_long <span class="sc">%&gt;%</span>  </span>
+<span id="cb69-2"><a href="#cb69-2"></a>  <span class="fu">mutate</span>(<span class="at">year.c =</span> (year <span class="sc">-</span> <span class="dv">2005</span>))</span>
+<span id="cb69-3"><a href="#cb69-3"></a>  </span>
+<span id="cb69-4"><a href="#cb69-4"></a>  </span>
+<span id="cb69-5"><a href="#cb69-5"></a>mod<span class="fl">.6</span> <span class="ot">&lt;-</span> <span class="fu">lmer</span>(C <span class="sc">~</span> <span class="dv">1</span> <span class="sc">+</span> year.c <span class="sc">+</span> (<span class="dv">1</span> <span class="sc">+</span> year.c  <span class="sc">|</span> ID), <span class="at">data=</span>b5_long)</span>
+<span id="cb69-6"><a href="#cb69-6"></a></span>
+<span id="cb69-7"><a href="#cb69-7"></a><span class="fu">summary</span>(mod<span class="fl">.6</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>Linear mixed model fit by REML ['lmerMod']
 Formula: C ~ 1 + year.c + (1 + year.c | ID)
@@ -18778,12 +18854,12 @@ Model failed to converge with max|grad| = 0.00437407 (tol = 0.002, component 1)<
 <div class="cell">
 <details>
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb72"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb72-1"><a href="#cb72-1"></a>b5_long <span class="sc">%&gt;%</span> </span>
-<span id="cb72-2"><a href="#cb72-2"></a>  <span class="fu">data_grid</span>(<span class="at">year.c =</span> <span class="fu">seq_range</span>(year.c, <span class="at">n =</span> <span class="dv">10</span>), <span class="at">.model =</span> b5_long) <span class="sc">%&gt;%</span> </span>
-<span id="cb72-3"><a href="#cb72-3"></a>    <span class="fu">add_predictions</span>(mod<span class="fl">.6</span>) <span class="sc">%&gt;%</span> </span>
-<span id="cb72-4"><a href="#cb72-4"></a>   <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">y =</span> pred, <span class="at">x =</span> year.c)) <span class="sc">+</span></span>
-<span id="cb72-5"><a href="#cb72-5"></a>  <span class="fu">geom_line</span>(<span class="fu">aes</span>(<span class="at">group =</span> ID), <span class="at">alpha =</span> .<span class="dv">4</span>) <span class="sc">+</span></span>
-<span id="cb72-6"><a href="#cb72-6"></a>  <span class="fu">geom_line</span>(<span class="at">data =</span> fix_eff, <span class="at">color =</span> <span class="st">"blue"</span>, <span class="at">size =</span> <span class="dv">3</span>) </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb71"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb71-1"><a href="#cb71-1"></a>b5_long <span class="sc">%&gt;%</span> </span>
+<span id="cb71-2"><a href="#cb71-2"></a>  <span class="fu">data_grid</span>(<span class="at">year.c =</span> <span class="fu">seq_range</span>(year.c, <span class="at">n =</span> <span class="dv">10</span>), <span class="at">.model =</span> b5_long) <span class="sc">%&gt;%</span> </span>
+<span id="cb71-3"><a href="#cb71-3"></a>    <span class="fu">add_predictions</span>(mod<span class="fl">.6</span>) <span class="sc">%&gt;%</span> </span>
+<span id="cb71-4"><a href="#cb71-4"></a>   <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">y =</span> pred, <span class="at">x =</span> year.c)) <span class="sc">+</span></span>
+<span id="cb71-5"><a href="#cb71-5"></a>  <span class="fu">geom_line</span>(<span class="fu">aes</span>(<span class="at">group =</span> ID), <span class="at">alpha =</span> .<span class="dv">4</span>) <span class="sc">+</span></span>
+<span id="cb71-6"><a href="#cb71-6"></a>  <span class="fu">geom_line</span>(<span class="at">data =</span> fix_eff, <span class="at">color =</span> <span class="st">"blue"</span>, <span class="at">size =</span> <span class="dv">3</span>) </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 
 </div>
@@ -18842,13 +18918,13 @@ AND</p>
 <section id="as-starting" class="slide level2">
 <h2>0 as starting</h2>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb73"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb73-1"><a href="#cb73-1"></a>b5_long<span class="ot">&lt;-</span> b5_long <span class="sc">%&gt;%</span>  </span>
-<span id="cb73-2"><a href="#cb73-2"></a>  <span class="fu">mutate</span>(<span class="at">year.c =</span> (year <span class="sc">-</span> <span class="dv">2005</span>))</span>
-<span id="cb73-3"><a href="#cb73-3"></a>  </span>
-<span id="cb73-4"><a href="#cb73-4"></a>  </span>
-<span id="cb73-5"><a href="#cb73-5"></a>mod<span class="fl">.6</span> <span class="ot">&lt;-</span> <span class="fu">lmer</span>(C <span class="sc">~</span> <span class="dv">1</span> <span class="sc">+</span> year.c <span class="sc">+</span> (<span class="dv">1</span> <span class="sc">+</span> year.c  <span class="sc">|</span> ID), <span class="at">data=</span>b5_long)</span>
-<span id="cb73-6"><a href="#cb73-6"></a></span>
-<span id="cb73-7"><a href="#cb73-7"></a><span class="fu">summary</span>(mod<span class="fl">.6</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb72"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb72-1"><a href="#cb72-1"></a>b5_long<span class="ot">&lt;-</span> b5_long <span class="sc">%&gt;%</span>  </span>
+<span id="cb72-2"><a href="#cb72-2"></a>  <span class="fu">mutate</span>(<span class="at">year.c =</span> (year <span class="sc">-</span> <span class="dv">2005</span>))</span>
+<span id="cb72-3"><a href="#cb72-3"></a>  </span>
+<span id="cb72-4"><a href="#cb72-4"></a>  </span>
+<span id="cb72-5"><a href="#cb72-5"></a>mod<span class="fl">.6</span> <span class="ot">&lt;-</span> <span class="fu">lmer</span>(C <span class="sc">~</span> <span class="dv">1</span> <span class="sc">+</span> year.c <span class="sc">+</span> (<span class="dv">1</span> <span class="sc">+</span> year.c  <span class="sc">|</span> ID), <span class="at">data=</span>b5_long)</span>
+<span id="cb72-6"><a href="#cb72-6"></a></span>
+<span id="cb72-7"><a href="#cb72-7"></a><span class="fu">summary</span>(mod<span class="fl">.6</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>Linear mixed model fit by REML ['lmerMod']
 Formula: C ~ 1 + year.c + (1 + year.c | ID)
@@ -18883,13 +18959,13 @@ Model failed to converge with max|grad| = 0.00437407 (tol = 0.002, component 1)<
 <section id="as-mid" class="slide level2">
 <h2>0 as mid</h2>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb75"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb75-1"><a href="#cb75-1"></a>b5_long<span class="ot">&lt;-</span> b5_long <span class="sc">%&gt;%</span>  </span>
-<span id="cb75-2"><a href="#cb75-2"></a>  <span class="fu">mutate</span>(<span class="at">year.cM =</span> (year <span class="sc">-</span> <span class="dv">2009</span>))</span>
-<span id="cb75-3"><a href="#cb75-3"></a>  </span>
-<span id="cb75-4"><a href="#cb75-4"></a>  </span>
-<span id="cb75-5"><a href="#cb75-5"></a>mod<span class="fl">.7</span> <span class="ot">&lt;-</span> <span class="fu">lmer</span>(C <span class="sc">~</span> <span class="dv">1</span> <span class="sc">+</span> year.cM <span class="sc">+</span> (<span class="dv">1</span> <span class="sc">+</span> year.cM <span class="sc">|</span> ID), <span class="at">data=</span>b5_long)</span>
-<span id="cb75-6"><a href="#cb75-6"></a></span>
-<span id="cb75-7"><a href="#cb75-7"></a><span class="fu">summary</span>(mod<span class="fl">.7</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb74"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb74-1"><a href="#cb74-1"></a>b5_long<span class="ot">&lt;-</span> b5_long <span class="sc">%&gt;%</span>  </span>
+<span id="cb74-2"><a href="#cb74-2"></a>  <span class="fu">mutate</span>(<span class="at">year.cM =</span> (year <span class="sc">-</span> <span class="dv">2009</span>))</span>
+<span id="cb74-3"><a href="#cb74-3"></a>  </span>
+<span id="cb74-4"><a href="#cb74-4"></a>  </span>
+<span id="cb74-5"><a href="#cb74-5"></a>mod<span class="fl">.7</span> <span class="ot">&lt;-</span> <span class="fu">lmer</span>(C <span class="sc">~</span> <span class="dv">1</span> <span class="sc">+</span> year.cM <span class="sc">+</span> (<span class="dv">1</span> <span class="sc">+</span> year.cM <span class="sc">|</span> ID), <span class="at">data=</span>b5_long)</span>
+<span id="cb74-6"><a href="#cb74-6"></a></span>
+<span id="cb74-7"><a href="#cb74-7"></a><span class="fu">summary</span>(mod<span class="fl">.7</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>Linear mixed model fit by REML ['lmerMod']
 Formula: C ~ 1 + year.cM + (1 + year.cM | ID)
@@ -18957,7 +19033,7 @@ Model failed to converge with max|grad| = 0.00601838 (tol = 0.002, component 1)<
 <p>Comparing 2 models is called a likelihood ration test. Need to have: 1. same data 2. nested models (think of constraining a parameter to zero)</p>
 <p>Distributed as chi-square with df equal to constraint differences between models.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb77"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb77-1"><a href="#cb77-1"></a><span class="fu">anova</span>(mod<span class="fl">.2</span>, mod<span class="fl">.1</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb76"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb76-1"><a href="#cb76-1"></a><span class="fu">anova</span>(mod<span class="fl">.2</span>, mod<span class="fl">.1</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>Data: b5_long
 Models:

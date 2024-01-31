@@ -642,6 +642,19 @@ summary(mod.1)
 ```
 
 
+-------
+marginal covariance has compound symmetry 
+
+$$\Sigma_i = \begin{bmatrix}
+\sigma_{u_0}^2 + \sigma^2 & \sigma_{u_0}^2 & \cdot & \sigma_{u_0}^2 \\
+\sigma_{u_0}^2 & \sigma_{u_0}^2 + \sigma^2 & \cdot & \cdot \\
+\cdot & \cdot & \cdot & \cdot \\
+\cdot & \cdot & \cdot & \cdot \\
+\sigma_{u_0}^2 & \cdot & \cdot & \sigma_{u_0}^2 + \sigma^2
+\end{bmatrix}$$
+
+
+
 ------------------------------------------------------------------------
 
 ```{r}
@@ -704,18 +717,11 @@ fixef(mod.1)
 
 ## Residuals
 
-To get residuals and fitted scores
-
-```{r, echo = TRUE}
+```{r}
 #| code-fold: true
 library(broom.mixed)
 example.aug<- augment(mod.1, data = b5_long)
-
-example.aug
-
-# .fitted	 = predicted values
-# .resid	= residuals/errors
-# .fixed	 = predicted values with no random effects
+describe(example.aug)
 
 ```
 
@@ -837,23 +843,22 @@ $${\beta}_{1.26} = \gamma_{10} \pm U_{26}$$ Also call BLUPs or empirical bayes e
 
 
 
-## slope example
+## Slope example
 
 ```{r, echo = TRUE}
+#| code-fold: true
 mod.2 <- lmer(C ~ 1 + year + (1 | ID), data=b5_long)
-
 summary(mod.2)
 ```
 
 ------------------------------------------------------------------------
 
-```{r, echo = TRUE}
-
+```{r}
+#| code-fold: true
 b5_long<- b5_long %>%  
   mutate(year = as.numeric(year))
   
 mod.3 <- lmer(C ~ 1 + year + (1 | ID), data=b5_long)
-
 summary(mod.3)
 
 ```
@@ -862,14 +867,13 @@ summary(mod.3)
 
 ### The importance of scaling time
 
-```{r, echo = TRUE}
-
+```{r}
+#| code-fold: true
 b5_long<- b5_long %>%  
   mutate(year.c = (year - 2005))
   
   
 mod.4 <- lmer(C ~ 1 + year.c + (1 | ID), data=b5_long)
-
 summary(mod.4)
 
 ```
@@ -878,7 +882,8 @@ summary(mod.4)
 
 There are many ways to do this. The parameters package paired with the see package, both from the easystats package, are useful in this regard.
 
-```{r, echo = TRUE}
+```{r}
+#| code-fold: true
 library(parameters)
 library(see)
 
@@ -941,9 +946,11 @@ plot(p.mod4)
 If you want you can also get predicted lines for a particular individual. Along with prediction CI
 
 ```{r, echo = TRUE}
-p.r.mod2 <- ggpredict(mod.4, "year.c", type = "random", condition = c(Subject = 97))
+p.r.mod2 <- ggpredict(mod.4, "year.c", type = "random", condition = c(ID = 97))
 p.r.mod2
 ```
+
+
 $$\hat{Y}_{ti} = [\gamma_{00} + U_{0i}] + [\gamma_{10}+U_{1i} ]  * Time_{ti}$$
 
 ------------------------------------------------------------------------
@@ -977,7 +984,8 @@ plot(p.r.mod3)
 
 1.  Start with a dataset that you created your model from and feed that to data_grid. Then we need to specify what variables you want to be constant and what variables you want to vary.
 
-```{r, echo = TRUE}
+```{r}
+#| code-fold: true
 library(modelr)
 b5_long %>% 
   data_grid(year.c = seq_range(year.c, n = 10))
@@ -986,8 +994,8 @@ b5_long %>%
 
 ------------------------------------------------------------------------
 
-```{r, echo = TRUE}
-
+```{r}
+#| code-fold: true
 b5_long %>% 
   data_grid(year.c = seq_range(year.c, n = 10), .model = b5_long)
 ```
@@ -995,6 +1003,7 @@ b5_long %>%
 ------------------------------------------------------------------------
 
 ```{r, echo = TRUE}
+#| code-fold: true
 test.c <- b5_long %>% 
   data_grid(year.c = seq_range(year.c, n = 10), .model = b5_long) %>% 
     add_predictions(mod.4)
@@ -1003,8 +1012,8 @@ test.c <- b5_long %>%
 
 ------------------------------------------------------------------------
 
-```{r, echo = TRUE}
-
+```{r}
+#| code-fold: true
 b5_long %>% 
   data_grid(year.c = seq_range(year.c, n = 10), .model = b5_long) %>% 
     add_predictions(mod.4) %>% 
@@ -1014,8 +1023,8 @@ b5_long %>%
 
 ------------------------------------------------------------------------
 
-```{r, echo = TRUE}
- 
+```{r}
+ #| code-fold: true
 fix_eff <- b5_long %>% 
   data_grid(year.c = seq_range(year.c, n = 10), .model = b5_long) %>% 
   add_predictions(mod.4) %>% 
@@ -1029,7 +1038,7 @@ fix_eff
 
 
 -----
-```{r, echo=TRUE}
+```{r}
 #| code-fold: true
 b5_long %>% 
   data_grid(year.c = seq_range(year.c, n = 10), .model = b5_long) %>% 
@@ -1045,7 +1054,7 @@ b5_long %>%
 
 -----------
 
-```{r, echo = TRUE}
+```{r}
 #| code-fold: true
 b5_long %>% 
   data_grid(year.c = seq_range(year.c, n = 10), .model = b5_long) %>% 
@@ -1211,7 +1220,6 @@ REML = Restricted maximum likelihood
 Similar to sample vs population estimates of SD where we do or don't divide by n-1, ML downward biased random effect estimates.
 
 REML maximizes the likelihood of the residuals, so models with different fixed effects are not on the same scale and are not comparable. As a result, you cannot compare fixed models with likleihood metrics (aic) with REML. You can compare variance differences.
-
 
 ## Testing significance 
 Methods for testing single parameters
