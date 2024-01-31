@@ -688,6 +688,12 @@ coef = fixef + raneff
 head(ranef(mod.1))
 ```
 
+
+
+--------------
+
+
+
 ```{r, echo = TRUE}
 head(coef(mod.1))
 ```
@@ -712,6 +718,7 @@ example.aug
 # .fixed	 = predicted values with no random effects
 
 ```
+
 
 ## Predicted scores
 
