@@ -4,4 +4,3 @@ editor: visual
 ---
 
 1.  [Longitudinal MLM homework](hw1.qmd)
-

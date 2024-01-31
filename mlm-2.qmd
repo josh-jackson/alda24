@@ -642,18 +642,6 @@ summary(mod.1)
 ```
 
 
--------
-marginal covariance has compound symmetry 
-
-$$\Sigma_i = \begin{bmatrix}
-\sigma_{u_0}^2 + \sigma^2 & \sigma_{u_0}^2 & \cdot & \sigma_{u_0}^2 \\
-\sigma_{u_0}^2 & \sigma_{u_0}^2 + \sigma^2 & \cdot & \cdot \\
-\cdot & \cdot & \cdot & \cdot \\
-\cdot & \cdot & \cdot & \cdot \\
-\sigma_{u_0}^2 & \cdot & \cdot & \sigma_{u_0}^2 + \sigma^2
-\end{bmatrix}$$
-
-
 
 ------------------------------------------------------------------------
 
