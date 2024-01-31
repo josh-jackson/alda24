@@ -1123,7 +1123,9 @@ $${e}_{ij} \sim \mathcal{N}(0, \sigma^{2})$$ The ${e}_{ij}$ is structured as a N
 
 Note that it is possible to impose a different error structure depending on your needs.
 
+
 ## Decomposing variance for random intercept model
+
 
  $$\text{Total variance CS} = \begin{pmatrix} 
        \tau_{00}^{2} + \sigma^{2}& \tau_{00}^{2} & \tau_{00}^{2}\\ 
