@@ -18848,6 +18848,65 @@ Model failed to converge with max|grad| = 0.00437407 (tol = 0.002, component 1)<
 
 </div>
 <img data-src="mlm-2_files/figure-revealjs/unnamed-chunk-55-1.png" width="960" class="r-stretch"></section>
+<section class="slide level2">
+
+<p>With {marginaleffects}</p>
+<div class="cell">
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb72"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb72-1"><a href="#cb72-1"></a>pre <span class="ot">&lt;-</span> <span class="fu">predictions</span>(mod<span class="fl">.6</span>, <span class="at">newdata =</span> <span class="fu">datagrid</span>(<span class="at">year.c =</span> <span class="fu">c</span>(<span class="dv">0</span>, <span class="dv">8</span>), <span class="at">ID =</span> unique))</span>
+<span id="cb72-2"><a href="#cb72-2"></a></span>
+<span id="cb72-3"><a href="#cb72-3"></a>pre</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+ year.c      ID Estimate Std. Error   z Pr(&gt;|z|)   S 2.5 % 97.5 %
+      0 901         4.87    0.00677 720   &lt;0.001 Inf  4.86   4.89
+      0 2301        5.03    0.00677 744   &lt;0.001 Inf  5.02   5.05
+      0 2302        4.99    0.00677 738   &lt;0.001 Inf  4.98   5.00
+      0 4701        4.73    0.00677 698   &lt;0.001 Inf  4.71   4.74
+      0 4901        4.77    0.00677 705   &lt;0.001 Inf  4.75   4.78
+--- 17120 rows omitted. See ?avg_predictions and ?print.marginaleffects --- 
+      8 8272902     4.91    0.00799 615   &lt;0.001 Inf  4.90   4.93
+      8 8275602     4.24    0.00799 530   &lt;0.001 Inf  4.22   4.25
+      8 8276202     4.90    0.00799 613   &lt;0.001 Inf  4.88   4.92
+      8 8277302     4.70    0.00799 588   &lt;0.001 Inf  4.68   4.71
+      8 8280702     4.80    0.00799 600   &lt;0.001 Inf  4.78   4.82
+Columns: rowid, estimate, std.error, statistic, p.value, s.value, conf.low, conf.high, C, year.c, ID </code></pre>
+</div>
+</div>
+</section>
+<section class="slide level2">
+
+<div class="cell">
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb74"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb74-1"><a href="#cb74-1"></a>pre2 <span class="ot">&lt;-</span> <span class="fu">predictions</span>(mod<span class="fl">.6</span>, <span class="at">newdata =</span> <span class="fu">datagrid</span>(<span class="at">year.c =</span> <span class="fu">c</span>(<span class="dv">0</span>, <span class="dv">8</span>)))</span>
+<span id="cb74-2"><a href="#cb74-2"></a>pre2</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+ year.c Estimate Std. Error   z Pr(&gt;|z|)   S 2.5 % 97.5 %  ID
+      0     4.87    0.00677 720   &lt;0.001 Inf  4.86   4.89 901
+      8     4.93    0.00799 616   &lt;0.001 Inf  4.91   4.94 901
+
+Columns: rowid, estimate, std.error, statistic, p.value, s.value, conf.low, conf.high, C, ID, year.c </code></pre>
+</div>
+</div>
+</section>
+<section class="slide level2">
+
+<div class="cell">
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb76"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb76-1"><a href="#cb76-1"></a>pre <span class="sc">%&gt;%</span> </span>
+<span id="cb76-2"><a href="#cb76-2"></a>   <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">y =</span> estimate, <span class="at">x =</span> year.c)) <span class="sc">+</span></span>
+<span id="cb76-3"><a href="#cb76-3"></a>  <span class="fu">geom_line</span>(<span class="fu">aes</span>(<span class="at">group =</span> ID), <span class="at">alpha =</span> .<span class="dv">2</span>) <span class="sc">+</span></span>
+<span id="cb76-4"><a href="#cb76-4"></a>  <span class="fu">geom_line</span>(<span class="fu">aes</span>(<span class="at">y =</span> estimate), <span class="at">data =</span> pre2, <span class="at">color =</span> <span class="st">"blue"</span>, <span class="at">size =</span> <span class="dv">3</span>) </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+
+</div>
+<img data-src="mlm-2_files/figure-revealjs/unnamed-chunk-58-1.png" width="960" class="r-stretch"></section>
 <section id="error-structure-1" class="slide level2">
 <h2>Error Structure</h2>
 <p>The residual structure, where the random effects are again normally distributed with a mean of zero, but this time one must also consider covariance in addition to variance.</p>
@@ -18902,13 +18961,13 @@ AND</p>
 <section id="as-starting" class="slide level2">
 <h2>0 as starting</h2>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb72"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb72-1"><a href="#cb72-1"></a>b5_long<span class="ot">&lt;-</span> b5_long <span class="sc">%&gt;%</span>  </span>
-<span id="cb72-2"><a href="#cb72-2"></a>  <span class="fu">mutate</span>(<span class="at">year.c =</span> (year <span class="sc">-</span> <span class="dv">2005</span>))</span>
-<span id="cb72-3"><a href="#cb72-3"></a>  </span>
-<span id="cb72-4"><a href="#cb72-4"></a>  </span>
-<span id="cb72-5"><a href="#cb72-5"></a>mod<span class="fl">.6</span> <span class="ot">&lt;-</span> <span class="fu">lmer</span>(C <span class="sc">~</span> <span class="dv">1</span> <span class="sc">+</span> year.c <span class="sc">+</span> (<span class="dv">1</span> <span class="sc">+</span> year.c  <span class="sc">|</span> ID), <span class="at">data=</span>b5_long)</span>
-<span id="cb72-6"><a href="#cb72-6"></a></span>
-<span id="cb72-7"><a href="#cb72-7"></a><span class="fu">summary</span>(mod<span class="fl">.6</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb77"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb77-1"><a href="#cb77-1"></a>b5_long<span class="ot">&lt;-</span> b5_long <span class="sc">%&gt;%</span>  </span>
+<span id="cb77-2"><a href="#cb77-2"></a>  <span class="fu">mutate</span>(<span class="at">year.c =</span> (year <span class="sc">-</span> <span class="dv">2005</span>))</span>
+<span id="cb77-3"><a href="#cb77-3"></a>  </span>
+<span id="cb77-4"><a href="#cb77-4"></a>  </span>
+<span id="cb77-5"><a href="#cb77-5"></a>mod<span class="fl">.6</span> <span class="ot">&lt;-</span> <span class="fu">lmer</span>(C <span class="sc">~</span> <span class="dv">1</span> <span class="sc">+</span> year.c <span class="sc">+</span> (<span class="dv">1</span> <span class="sc">+</span> year.c  <span class="sc">|</span> ID), <span class="at">data=</span>b5_long)</span>
+<span id="cb77-6"><a href="#cb77-6"></a></span>
+<span id="cb77-7"><a href="#cb77-7"></a><span class="fu">summary</span>(mod<span class="fl">.6</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>Linear mixed model fit by REML ['lmerMod']
 Formula: C ~ 1 + year.c + (1 + year.c | ID)
@@ -18943,13 +19002,13 @@ Model failed to converge with max|grad| = 0.00437407 (tol = 0.002, component 1)<
 <section id="as-mid" class="slide level2">
 <h2>0 as mid</h2>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb74"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb74-1"><a href="#cb74-1"></a>b5_long<span class="ot">&lt;-</span> b5_long <span class="sc">%&gt;%</span>  </span>
-<span id="cb74-2"><a href="#cb74-2"></a>  <span class="fu">mutate</span>(<span class="at">year.cM =</span> (year <span class="sc">-</span> <span class="dv">2009</span>))</span>
-<span id="cb74-3"><a href="#cb74-3"></a>  </span>
-<span id="cb74-4"><a href="#cb74-4"></a>  </span>
-<span id="cb74-5"><a href="#cb74-5"></a>mod<span class="fl">.7</span> <span class="ot">&lt;-</span> <span class="fu">lmer</span>(C <span class="sc">~</span> <span class="dv">1</span> <span class="sc">+</span> year.cM <span class="sc">+</span> (<span class="dv">1</span> <span class="sc">+</span> year.cM <span class="sc">|</span> ID), <span class="at">data=</span>b5_long)</span>
-<span id="cb74-6"><a href="#cb74-6"></a></span>
-<span id="cb74-7"><a href="#cb74-7"></a><span class="fu">summary</span>(mod<span class="fl">.7</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb79"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb79-1"><a href="#cb79-1"></a>b5_long<span class="ot">&lt;-</span> b5_long <span class="sc">%&gt;%</span>  </span>
+<span id="cb79-2"><a href="#cb79-2"></a>  <span class="fu">mutate</span>(<span class="at">year.cM =</span> (year <span class="sc">-</span> <span class="dv">2009</span>))</span>
+<span id="cb79-3"><a href="#cb79-3"></a>  </span>
+<span id="cb79-4"><a href="#cb79-4"></a>  </span>
+<span id="cb79-5"><a href="#cb79-5"></a>mod<span class="fl">.7</span> <span class="ot">&lt;-</span> <span class="fu">lmer</span>(C <span class="sc">~</span> <span class="dv">1</span> <span class="sc">+</span> year.cM <span class="sc">+</span> (<span class="dv">1</span> <span class="sc">+</span> year.cM <span class="sc">|</span> ID), <span class="at">data=</span>b5_long)</span>
+<span id="cb79-6"><a href="#cb79-6"></a></span>
+<span id="cb79-7"><a href="#cb79-7"></a><span class="fu">summary</span>(mod<span class="fl">.7</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>Linear mixed model fit by REML ['lmerMod']
 Formula: C ~ 1 + year.cM + (1 + year.cM | ID)
@@ -19017,7 +19076,7 @@ Model failed to converge with max|grad| = 0.00601838 (tol = 0.002, component 1)<
 <p>Comparing 2 models is called a likelihood ration test. Need to have: 1. same data 2. nested models (think of constraining a parameter to zero)</p>
 <p>Distributed as chi-square with df equal to constraint differences between models.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb76"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb76-1"><a href="#cb76-1"></a><span class="fu">anova</span>(mod<span class="fl">.2</span>, mod<span class="fl">.1</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb81"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb81-1"><a href="#cb81-1"></a><span class="fu">anova</span>(mod<span class="fl">.2</span>, mod<span class="fl">.1</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>Data: b5_long
 Models:

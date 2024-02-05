@@ -1097,6 +1097,40 @@ b5_long %>%
 ```
 
 
+---------
+
+With {marginaleffects}
+
+```{r}
+#| code-fold: true
+pre <- predictions(mod.6, newdata = datagrid(year.c = c(0, 8), ID = unique))
+
+pre
+```
+
+-----
+
+```{r}
+#| code-fold: true
+pre2 <- predictions(mod.6, newdata = datagrid(year.c = c(0, 8)))
+pre2
+```
+
+
+
+
+-----
+
+```{r}
+#| code-fold: true
+pre %>% 
+   ggplot(aes(y = estimate, x = year.c)) +
+  geom_line(aes(group = ID), alpha = .2) +
+  geom_line(aes(y = estimate), data = pre2, color = "blue", size = 3) 
+```
+
+
+
 ## Error Structure
 
 The residual structure, where the random effects are again normally distributed with a mean of zero, but this time one must also consider covariance in addition to variance.
