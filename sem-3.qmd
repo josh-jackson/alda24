@@ -1,9 +1,12 @@
 ---
-title: "sem"
-execute: 
-  echo: true
+title: SEM
 format: revealjs
 editor: visual
+execute:
+  echo: true
+html:
+  code-fold: true
+  code-summary: Show the code
 ---
 
 ## Longitudinal Structural Equation Modeling
