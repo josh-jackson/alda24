@@ -9,3 +9,4 @@ editor: visual
 
 3.  [Longitudinal SEM](sem-3.qmd)
 
+4.  [Bends](bends-4.qmd)
