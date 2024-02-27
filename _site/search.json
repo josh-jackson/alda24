@@ -1299,13 +1299,13 @@
     "href": "bends-4.html#generalized-growth-curves",
     "title": "bends",
     "section": "Generalized growth curves",
-    "text": "Generalized growth curves\n\nOften times your DV is not Logistic and"
+    "text": "Generalized growth curves\n\nOften times your DV is not assumed to be governed by a normal data generating process. For example, we are working with count variables, or with dichotomous variables.\nJust like with regression, you would fit different response distribution (binomial, poisson, beta, etc) and then use a link function to create a linear formula.\nThese same techniques can be applied to MLMs and thus longitudinal MLMs."
   },
   {
     "objectID": "bends-4.html#non-linear-models",
     "href": "bends-4.html#non-linear-models",
     "title": "bends",
     "section": "Non-linear models",
-    "text": "Non-linear models"
+    "text": "Non-linear models\nStandard GLM can be written this way, which reflects a linear combination \\[ \\eta_n = \\sum_{i = 1}^K b_i x_{ni}\\]\nNonlinear models cannot, such as: \\[\\eta_n = b_1 \\exp(b_2 x_n)\\]\n\nMany nonlinear functions exist, and can be used in standard regression. We can of course take these functions and apply them to longitudinal data."
   }
 ]

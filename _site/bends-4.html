@@ -2048,12 +2048,602 @@ Variances:
 <section id="generalized-growth-curves" class="slide level2">
 <h2>Generalized growth curves</h2>
 <ul>
-<li>Often times your DV is not Logistic and</li>
+<li><p>Often times your DV is not assumed to be governed by a normal data generating process. For example, we are working with count variables, or with dichotomous variables.</p></li>
+<li><p>Just like with regression, you would fit different response distribution (binomial, poisson, beta, etc) and then use a link function to create a linear formula.</p></li>
+<li><p>These same techniques can be applied to MLMs and thus longitudinal MLMs.</p></li>
 </ul>
 </section>
+<section class="slide level2">
+
+<p><span class="math display">\[y_i \sim \operatorname{Bernoulli}(p_i)\]</span> <span class="math display">\[p_i = \operatorname{logit}^{-1}(b_0)\]</span> <span class="math display">\[\operatorname{logit}(x) = \log \left ( \frac{x}{1 - x} \right )\]</span></p>
+</section>
+<section class="slide level2">
+
+<p><span class="math display">\[y_{ij}  \sim \operatorname{Bernoulli}(p_{ij}) \\\]</span> <span class="math display">\[\operatorname{logit}(p_{ij})  = \gamma_{00} + \gamma_{10} \text{time}_{ij} + [\text{U}_{0j} + \text{U}_{1j} \text{time}_{ij}]\]</span></p>
+</section>
+<section class="slide level2">
+
+<div class="cell">
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb66"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb66-1"><a href="#cb66-1"></a><span class="fu">library</span>(dplyr)</span>
+<span id="cb66-2"><a href="#cb66-2"></a>dogs <span class="ot">&lt;-</span> <span class="fu">read.csv</span>(<span class="st">"~/Library/CloudStorage/Box-Box/5165 Applied Longitudinal Data Analysis/2024/dogs.txt"</span>, <span class="at">sep=</span><span class="st">""</span>) <span class="sc">%&gt;%</span> <span class="fu">rename</span>(<span class="at">dog =</span> Dog)</span>
+<span id="cb66-3"><a href="#cb66-3"></a>dogs</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>   dog t0 t1 t2 t3 t4 t5 t6 t7 t8 t9 t10 t11 t12 t13 t14 t15 t16 t17 t18 t19
+1   13  1  1  0  1  0  1  0  0  0  0   0   0   0   0   0   0   0   0   0   0
+2   16  1  1  1  1  1  1  1  0  1  1   1   1   1   1   0   0   0   0   0   0
+3   17  1  1  1  1  1  0  0  1  0  0   1   1   0   0   1   0   1   0   0   0
+4   18  1  0  0  1  1  0  0  0  0  1   0   1   0   1   0   0   0   0   0   0
+5   21  1  1  1  1  1  1  1  1  0  0   0   0   0   0   0   0   0   0   0   0
+6   27  1  1  1  1  1  1  0  0  0  0   1   1   0   1   0   0   0   0   0   0
+7   29  1  1  1  1  1  0  1  1  1  1   1   1   0   0   0   0   0   0   0   0
+8   30  1  1  1  1  1  1  1  0  0  1   1   0   0   0   0   0   0   0   0   0
+9   32  1  1  1  1  1  0  1  0  1  0   0   1   0   1   1   1   0   0   0   0
+10  33  1  1  1  1  0  1  1  0  0  1   0   1   0   0   0   0   0   0   0   0
+11  34  1  1  1  1  1  1  1  1  1  1   0   0   0   0   0   0   1   0   0   0
+12  36  1  1  1  1  1  0  0  0  0  0   1   1   0   0   0   0   0   0   0   0
+13  37  1  1  1  0  0  1  0  1  1  0   0   0   0   0   0   0   0   0   0   0
+14  41  1  1  1  1  0  1  0  0  1  0   0   0   0   0   0   0   0   0   0   0
+15  42  1  1  1  0  1  0  0  1  0  0   0   0   0   0   0   0   0   0   0   0
+16  43  1  1  1  1  1  1  1  0  0  0   0   0   0   0   0   0   0   0   0   0
+17  45  1  0  1  0  1  1  1  0  1  0   0   0   0   1   0   0   0   0   0   0
+18  47  1  1  1  1  0  1  0  1  0  0   0   0   0   0   0   0   0   0   0   0
+19  48  1  0  1  1  1  1  0  1  1  1   0   0   0   0   0   0   0   0   0   0
+20  46  1  1  1  1  0  0  1  0  1  0   0   1   0   1   0   0   0   0   0   0
+21  49  1  1  1  0  0  0  0  0  1  0   0   0   0   0   0   0   0   0   0   0
+22  50  1  1  0  1  0  1  0  0  0  0   0   0   0   0   0   0   1   1   0   0
+23  52  1  1  1  1  1  1  1  0  0  0   0   0   0   0   0   0   0   0   0   0
+24  54  1  1  1  1  1  1  1  1  0  0   0   1   0   1   1   1   0   0   1   0
+25  57  1  1  1  1  1  1  0  1  0  0   0   0   1   0   1   0   0   0   0   0
+26  59  1  1  0  1  0  0  0  1  0  0   1   0   0   0   0   0   0   0   0   0
+27  67  1  1  1  1  0  1  0  0  0  0   0   0   0   0   0   0   0   0   0   0
+28  66  1  1  1  0  1  0  1  0  0  0   1   0   1   0   0   0   0   0   0   0
+29  69  1  1  1  1  0  0  1  1  0  0   0   1   0   1   0   1   0   1   0   0
+30  71  1  1  1  1  0  0  0  0  0  0   1   0   1   0   0   0   0   0   0   0
+   t20 t21 t22 t23 t24
+1    0   0   0   0   0
+2    0   0   0   0   0
+3    0   0   0   0   0
+4    0   0   0   0   0
+5    0   0   0   0   0
+6    0   0   0   0   0
+7    0   0   0   0   0
+8    0   0   0   0   0
+9    0   1   0   0   1
+10   0   0   0   0   0
+11   0   0   0   0   0
+12   0   0   0   0   0
+13   0   0   0   0   0
+14   0   0   0   0   0
+15   0   0   0   0   0
+16   0   0   0   0   0
+17   0   0   0   0   0
+18   0   0   0   0   0
+19   0   0   0   0   0
+20   0   0   0   0   0
+21   0   0   0   0   0
+22   0   0   0   0   0
+23   0   0   0   0   0
+24   0   0   0   0   0
+25   0   0   0   0   0
+26   0   0   0   0   0
+27   0   0   0   0   0
+28   0   0   0   0   0
+29   0   0   0   0   0
+30   0   0   0   0   0</code></pre>
+</div>
+</div>
+</section>
+<section class="slide level2">
+
+<div class="cell">
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb68"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb68-1"><a href="#cb68-1"></a>dogs <span class="ot">&lt;-</span></span>
+<span id="cb68-2"><a href="#cb68-2"></a>  dogs <span class="sc">%&gt;%</span> </span>
+<span id="cb68-3"><a href="#cb68-3"></a>  <span class="fu">pivot_longer</span>(<span class="sc">-</span>dog, <span class="at">values_to =</span> <span class="st">"y"</span>) <span class="sc">%&gt;%</span> </span>
+<span id="cb68-4"><a href="#cb68-4"></a>  <span class="fu">mutate</span>(<span class="at">trial =</span> <span class="fu">str_remove</span>(name, <span class="st">"t"</span>) <span class="sc">%&gt;%</span> <span class="fu">as.double</span>()) </span>
+<span id="cb68-5"><a href="#cb68-5"></a>dogs</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 750 × 4
+     dog name      y trial
+   &lt;int&gt; &lt;chr&gt; &lt;int&gt; &lt;dbl&gt;
+ 1    13 t0        1     0
+ 2    13 t1        1     1
+ 3    13 t2        0     2
+ 4    13 t3        1     3
+ 5    13 t4        0     4
+ 6    13 t5        1     5
+ 7    13 t6        0     6
+ 8    13 t7        0     7
+ 9    13 t8        0     8
+10    13 t9        0     9
+# ℹ 740 more rows</code></pre>
+</div>
+</div>
+</section>
+<section class="slide level2">
+
+<div class="cell">
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb70"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb70-1"><a href="#cb70-1"></a><span class="co"># define the dog subset</span></span>
+<span id="cb70-2"><a href="#cb70-2"></a><span class="fu">set.seed</span>(<span class="dv">6</span>)</span>
+<span id="cb70-3"><a href="#cb70-3"></a></span>
+<span id="cb70-4"><a href="#cb70-4"></a>subset <span class="ot">&lt;-</span> <span class="fu">sample</span>(<span class="dv">1</span><span class="sc">:</span><span class="dv">30</span>, <span class="at">size =</span> <span class="dv">8</span>)</span>
+<span id="cb70-5"><a href="#cb70-5"></a></span>
+<span id="cb70-6"><a href="#cb70-6"></a><span class="co"># subset the data</span></span>
+<span id="cb70-7"><a href="#cb70-7"></a>dogs <span class="sc">%&gt;%</span> </span>
+<span id="cb70-8"><a href="#cb70-8"></a>  <span class="fu">filter</span>(dog <span class="sc">%in%</span> subset) <span class="sc">%&gt;%</span> </span>
+<span id="cb70-9"><a href="#cb70-9"></a></span>
+<span id="cb70-10"><a href="#cb70-10"></a>  <span class="co"># plot!</span></span>
+<span id="cb70-11"><a href="#cb70-11"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> trial, <span class="at">y =</span> y)) <span class="sc">+</span></span>
+<span id="cb70-12"><a href="#cb70-12"></a>  <span class="fu">geom_point</span>() <span class="sc">+</span></span>
+<span id="cb70-13"><a href="#cb70-13"></a>  <span class="fu">scale_y_continuous</span>(<span class="at">breaks =</span> <span class="dv">0</span><span class="sc">:</span><span class="dv">1</span>) <span class="sc">+</span></span>
+<span id="cb70-14"><a href="#cb70-14"></a>  <span class="fu">theme</span>(<span class="at">panel.grid =</span> <span class="fu">element_blank</span>()) <span class="sc">+</span></span>
+<span id="cb70-15"><a href="#cb70-15"></a>  <span class="fu">facet_wrap</span>(<span class="sc">~</span> dog, <span class="at">ncol =</span> <span class="dv">4</span>, <span class="at">labeller =</span> label_both)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+
+</div>
+<img data-src="bends-4_files/figure-revealjs/unnamed-chunk-49-1.png" width="960" class="r-stretch"></section>
+<section class="slide level2">
+
+<div class="cell">
+<div class="sourceCode cell-code" id="cb71"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb71-1"><a href="#cb71-1"></a><span class="fu">library</span>(brms)</span>
+<span id="cb71-2"><a href="#cb71-2"></a>growth.log <span class="ot">&lt;-</span> </span>
+<span id="cb71-3"><a href="#cb71-3"></a>  <span class="fu">brm</span>(<span class="at">data =</span> dogs,</span>
+<span id="cb71-4"><a href="#cb71-4"></a>      <span class="at">family =</span> bernoulli,</span>
+<span id="cb71-5"><a href="#cb71-5"></a>      y <span class="sc">~</span> <span class="dv">0</span> <span class="sc">+</span> Intercept <span class="sc">+</span> trial <span class="sc">+</span> (<span class="dv">1</span> <span class="sc">+</span> trial <span class="sc">|</span> dog),</span>
+<span id="cb71-6"><a href="#cb71-6"></a>      <span class="at">prior =</span> <span class="fu">c</span>(<span class="fu">prior</span>(<span class="fu">normal</span>(<span class="sc">-</span><span class="dv">2</span>, <span class="dv">1</span>), <span class="at">class =</span> b, <span class="at">coef =</span> Intercept),</span>
+<span id="cb71-7"><a href="#cb71-7"></a>                <span class="fu">prior</span>(<span class="fu">normal</span>(<span class="fl">0.25</span>, <span class="fl">0.25</span>), <span class="at">class =</span> b),</span>
+<span id="cb71-8"><a href="#cb71-8"></a>                <span class="fu">prior</span>(<span class="fu">exponential</span>(<span class="dv">1</span>), <span class="at">class =</span> sd),</span>
+<span id="cb71-9"><a href="#cb71-9"></a>                <span class="fu">prior</span>(<span class="fu">lkj</span>(<span class="dv">4</span>), <span class="at">class =</span> cor)),</span>
+<span id="cb71-10"><a href="#cb71-10"></a>      <span class="at">iter =</span> <span class="dv">2000</span>, <span class="at">warmup =</span> <span class="dv">1000</span>, <span class="at">cores =</span> <span class="dv">3</span>, <span class="at">chains =</span> <span class="dv">3</span>,</span>
+<span id="cb71-11"><a href="#cb71-11"></a>      <span class="at">seed =</span> <span class="dv">6</span>,</span>
+<span id="cb71-12"><a href="#cb71-12"></a>      <span class="at">backend =</span> <span class="st">"cmdstanr"</span>,</span>
+<span id="cb71-13"><a href="#cb71-13"></a>      <span class="at">file =</span> <span class="st">"growth.log"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section class="slide level2">
+
+<div class="cell">
+<div class="sourceCode cell-code" id="cb72"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb72-1"><a href="#cb72-1"></a><span class="fu">summary</span>(growth.log)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code> Family: bernoulli 
+  Links: mu = logit 
+Formula: y ~ 0 + Intercept + trial + (1 + trial | dog) 
+   Data: dogs (Number of observations: 750) 
+  Draws: 3 chains, each with iter = 2000; warmup = 1000; thin = 1;
+         total post-warmup draws = 3000
+
+Group-Level Effects: 
+~dog (Number of levels: 30) 
+                     Estimate Est.Error l-95% CI u-95% CI Rhat Bulk_ESS
+sd(Intercept)            0.36      0.24     0.01     0.89 1.00      825
+sd(trial)                0.07      0.03     0.02     0.13 1.00      528
+cor(Intercept,trial)    -0.03      0.33    -0.63     0.62 1.00     1059
+                     Tail_ESS
+sd(Intercept)            1355
+sd(trial)                 564
+cor(Intercept,trial)     1805
+
+Population-Level Effects: 
+          Estimate Est.Error l-95% CI u-95% CI Rhat Bulk_ESS Tail_ESS
+Intercept     2.07      0.22     1.65     2.51 1.00     2809     1895
+trial        -0.32      0.03    -0.38    -0.27 1.00     2206     1943
+
+Draws were sampled using sample(hmc). For each parameter, Bulk_ESS
+and Tail_ESS are effective sample size measures, and Rhat is the potential
+scale reduction factor on split chains (at convergence, Rhat = 1).</code></pre>
+</div>
+</div>
+</section>
+<section class="slide level2">
+
+<div class="cell">
+<div class="sourceCode cell-code" id="cb74"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb74-1"><a href="#cb74-1"></a><span class="fu">conditional_effects</span>(growth.log)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+
+</div>
+<img data-src="bends-4_files/figure-revealjs/unnamed-chunk-52-1.png" width="960" class="r-stretch"></section>
+<section class="slide level2">
+
+<p>The probability that an unfamiliar listener understands what a child says, develops from age 3 to age 8. Example pulled from T.J. Mahr’s website</p>
+<p>Proportions, bounded by 0 - 1. Nonlinear in that they are going to be logistic shapped.</p>
+<div class="cell">
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb75"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb75-1"><a href="#cb75-1"></a><span class="fu">library</span>(tidyverse)</span>
+<span id="cb75-2"><a href="#cb75-2"></a>points <span class="ot">&lt;-</span> <span class="fu">tibble</span>(</span>
+<span id="cb75-3"><a href="#cb75-3"></a>  <span class="at">age =</span> <span class="fu">c</span>(<span class="dv">38</span>, <span class="dv">45</span>, <span class="dv">52</span>, <span class="dv">61</span>, <span class="dv">80</span>, <span class="dv">74</span>), </span>
+<span id="cb75-4"><a href="#cb75-4"></a>  <span class="at">prop =</span> <span class="fu">c</span>(<span class="fl">0.146</span>, <span class="fl">0.241</span>, <span class="fl">0.571</span>, <span class="fl">0.745</span>, <span class="fl">0.843</span>, <span class="fl">0.738</span>))</span>
+<span id="cb75-5"><a href="#cb75-5"></a></span>
+<span id="cb75-6"><a href="#cb75-6"></a>colors <span class="ot">&lt;-</span> <span class="fu">list</span>(</span>
+<span id="cb75-7"><a href="#cb75-7"></a>  <span class="at">data =</span> <span class="st">"#41414550"</span>,</span>
+<span id="cb75-8"><a href="#cb75-8"></a>  <span class="at">fit =</span> <span class="st">"#414145"</span>)</span>
+<span id="cb75-9"><a href="#cb75-9"></a></span>
+<span id="cb75-10"><a href="#cb75-10"></a><span class="fu">ggplot</span>(points) <span class="sc">+</span> </span>
+<span id="cb75-11"><a href="#cb75-11"></a>  <span class="fu">aes</span>(<span class="at">x =</span> age, <span class="at">y =</span> prop) <span class="sc">+</span> </span>
+<span id="cb75-12"><a href="#cb75-12"></a>  <span class="fu">geom_point</span>(<span class="at">size =</span> <span class="fl">3.5</span>, <span class="at">color =</span> colors<span class="sc">$</span>data) <span class="sc">+</span></span>
+<span id="cb75-13"><a href="#cb75-13"></a>  <span class="fu">scale_x_continuous</span>(</span>
+<span id="cb75-14"><a href="#cb75-14"></a>    <span class="at">name =</span> <span class="st">"Age in months"</span>, </span>
+<span id="cb75-15"><a href="#cb75-15"></a>    <span class="at">limits =</span> <span class="fu">c</span>(<span class="dv">0</span>, <span class="dv">96</span>), </span>
+<span id="cb75-16"><a href="#cb75-16"></a>    <span class="co"># Because age is in months, I want breaks to land on multiples</span></span>
+<span id="cb75-17"><a href="#cb75-17"></a>    <span class="co"># of 12. The `Q` in `extended_breaks()` are "nice" numbers to use</span></span>
+<span id="cb75-18"><a href="#cb75-18"></a>    <span class="co"># for axis breaks.</span></span>
+<span id="cb75-19"><a href="#cb75-19"></a>    <span class="at">breaks =</span> scales<span class="sc">::</span><span class="fu">extended_breaks</span>(<span class="at">Q =</span> <span class="fu">c</span>(<span class="dv">24</span>, <span class="dv">12</span>))) <span class="sc">+</span> </span>
+<span id="cb75-20"><a href="#cb75-20"></a>  <span class="fu">scale_y_continuous</span>(</span>
+<span id="cb75-21"><a href="#cb75-21"></a>    <span class="at">name =</span> <span class="st">"Intelligibility"</span>,</span>
+<span id="cb75-22"><a href="#cb75-22"></a>    <span class="at">limits =</span> <span class="fu">c</span>(<span class="dv">0</span>, <span class="cn">NA</span>),</span>
+<span id="cb75-23"><a href="#cb75-23"></a>    <span class="at">labels =</span> scales<span class="sc">::</span><span class="fu">percent_format</span>(<span class="at">accuracy =</span> <span class="dv">1</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+
+</div>
+<img data-src="bends-4_files/figure-revealjs/unnamed-chunk-53-1.png" width="960" class="r-stretch"></section>
+<section class="slide level2">
+
+<div class="cell">
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb76"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb76-1"><a href="#cb76-1"></a>xs <span class="ot">&lt;-</span> <span class="fu">seq</span>(<span class="dv">0</span>, <span class="dv">96</span>, <span class="at">length.out =</span> <span class="dv">80</span>)</span>
+<span id="cb76-2"><a href="#cb76-2"></a></span>
+<span id="cb76-3"><a href="#cb76-3"></a><span class="co"># Create the curve from the equation parameters</span></span>
+<span id="cb76-4"><a href="#cb76-4"></a>trend <span class="ot">&lt;-</span> <span class="fu">tibble</span>(</span>
+<span id="cb76-5"><a href="#cb76-5"></a>  <span class="at">age =</span> xs,</span>
+<span id="cb76-6"><a href="#cb76-6"></a>  <span class="at">asymptote =</span> .<span class="dv">8</span>,</span>
+<span id="cb76-7"><a href="#cb76-7"></a>  <span class="at">scale =</span> .<span class="dv">2</span>,</span>
+<span id="cb76-8"><a href="#cb76-8"></a>  <span class="at">midpoint =</span> <span class="dv">48</span>,</span>
+<span id="cb76-9"><a href="#cb76-9"></a>  <span class="at">prop =</span> asymptote <span class="sc">/</span> (<span class="dv">1</span> <span class="sc">+</span> <span class="fu">exp</span>((midpoint <span class="sc">-</span> age) <span class="sc">*</span> scale)))</span>
+<span id="cb76-10"><a href="#cb76-10"></a></span>
+<span id="cb76-11"><a href="#cb76-11"></a><span class="fu">ggplot</span>(points) <span class="sc">+</span> </span>
+<span id="cb76-12"><a href="#cb76-12"></a>  <span class="fu">aes</span>(<span class="at">x =</span> age, <span class="at">y =</span> prop) <span class="sc">+</span> </span>
+<span id="cb76-13"><a href="#cb76-13"></a>  <span class="fu">geom_line</span>(<span class="at">data =</span> trend, <span class="at">color =</span> colors<span class="sc">$</span>fit) <span class="sc">+</span></span>
+<span id="cb76-14"><a href="#cb76-14"></a>  <span class="fu">geom_point</span>(<span class="at">size =</span> <span class="fl">3.5</span>, <span class="at">color =</span> colors<span class="sc">$</span>data) <span class="sc">+</span></span>
+<span id="cb76-15"><a href="#cb76-15"></a>  <span class="fu">scale_x_continuous</span>(</span>
+<span id="cb76-16"><a href="#cb76-16"></a>    <span class="at">name =</span> <span class="st">"Age in months"</span>, </span>
+<span id="cb76-17"><a href="#cb76-17"></a>    <span class="at">limits =</span> <span class="fu">c</span>(<span class="dv">0</span>, <span class="dv">96</span>), </span>
+<span id="cb76-18"><a href="#cb76-18"></a>    <span class="at">breaks =</span> scales<span class="sc">::</span><span class="fu">extended_breaks</span>(<span class="at">Q =</span> <span class="fu">c</span>(<span class="dv">24</span>, <span class="dv">12</span>))) <span class="sc">+</span> </span>
+<span id="cb76-19"><a href="#cb76-19"></a>  <span class="fu">scale_y_continuous</span>(</span>
+<span id="cb76-20"><a href="#cb76-20"></a>    <span class="at">name =</span> <span class="st">"Intelligibility"</span>,</span>
+<span id="cb76-21"><a href="#cb76-21"></a>    <span class="at">limits =</span> <span class="fu">c</span>(<span class="dv">0</span>, <span class="cn">NA</span>),</span>
+<span id="cb76-22"><a href="#cb76-22"></a>    <span class="at">labels =</span> scales<span class="sc">::</span><span class="fu">percent_format</span>(<span class="at">accuracy =</span> <span class="dv">1</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+
+</div>
+<img data-src="bends-4_files/figure-revealjs/unnamed-chunk-54-1.png" width="960" class="r-stretch"></section>
+<section class="slide level2">
+
+<div class="cell">
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb77"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb77-1"><a href="#cb77-1"></a>colors<span class="sc">$</span>asym <span class="ot">&lt;-</span> <span class="st">"#E7552C"</span></span>
+<span id="cb77-2"><a href="#cb77-2"></a>colors<span class="sc">$</span>mid <span class="ot">&lt;-</span> <span class="st">"#3B7B9E"</span></span>
+<span id="cb77-3"><a href="#cb77-3"></a>colors<span class="sc">$</span>scale <span class="ot">&lt;-</span> <span class="st">"#1FA35C"</span></span>
+<span id="cb77-4"><a href="#cb77-4"></a></span>
+<span id="cb77-5"><a href="#cb77-5"></a>p <span class="ot">&lt;-</span> <span class="fu">ggplot</span>(points) <span class="sc">+</span></span>
+<span id="cb77-6"><a href="#cb77-6"></a>  <span class="fu">aes</span>(<span class="at">x =</span> age, <span class="at">y =</span> prop) <span class="sc">+</span></span>
+<span id="cb77-7"><a href="#cb77-7"></a>  <span class="fu">annotate</span>(</span>
+<span id="cb77-8"><a href="#cb77-8"></a>    <span class="st">"segment"</span>,</span>
+<span id="cb77-9"><a href="#cb77-9"></a>    <span class="at">color =</span> colors<span class="sc">$</span>mid,</span>
+<span id="cb77-10"><a href="#cb77-10"></a>    <span class="at">x =</span> <span class="dv">48</span>, <span class="at">xend =</span> <span class="dv">48</span>,</span>
+<span id="cb77-11"><a href="#cb77-11"></a>    <span class="at">y =</span> <span class="dv">0</span>, <span class="at">yend =</span> .<span class="dv">4</span>,</span>
+<span id="cb77-12"><a href="#cb77-12"></a>    <span class="at">linetype =</span> <span class="st">"dashed"</span>) <span class="sc">+</span></span>
+<span id="cb77-13"><a href="#cb77-13"></a>  <span class="fu">annotate</span>(</span>
+<span id="cb77-14"><a href="#cb77-14"></a>    <span class="st">"segment"</span>,</span>
+<span id="cb77-15"><a href="#cb77-15"></a>    <span class="at">color =</span> colors<span class="sc">$</span>asym,</span>
+<span id="cb77-16"><a href="#cb77-16"></a>    <span class="at">x =</span> <span class="dv">20</span>, <span class="at">xend =</span> <span class="cn">Inf</span>,</span>
+<span id="cb77-17"><a href="#cb77-17"></a>    <span class="at">y =</span> .<span class="dv">8</span>, <span class="at">yend =</span> .<span class="dv">8</span>,</span>
+<span id="cb77-18"><a href="#cb77-18"></a>    <span class="at">linetype =</span> <span class="st">"dashed"</span>) <span class="sc">+</span></span>
+<span id="cb77-19"><a href="#cb77-19"></a>  <span class="fu">geom_line</span>(<span class="at">data =</span> trend, <span class="at">size =</span> <span class="dv">1</span>, <span class="at">color =</span> colors<span class="sc">$</span>fit) <span class="sc">+</span></span>
+<span id="cb77-20"><a href="#cb77-20"></a>  <span class="fu">geom_point</span>(<span class="at">size =</span> <span class="fl">3.5</span>, <span class="at">color =</span> colors<span class="sc">$</span>data) <span class="sc">+</span></span>
+<span id="cb77-21"><a href="#cb77-21"></a>  <span class="fu">annotate</span>(</span>
+<span id="cb77-22"><a href="#cb77-22"></a>    <span class="st">"text"</span>,</span>
+<span id="cb77-23"><a href="#cb77-23"></a>    <span class="at">label =</span> <span class="st">"growth plateaus at asymptote"</span>,</span>
+<span id="cb77-24"><a href="#cb77-24"></a>    <span class="at">x =</span> <span class="dv">20</span>, <span class="at">y =</span> .<span class="dv">84</span>,</span>
+<span id="cb77-25"><a href="#cb77-25"></a>    <span class="co"># horizontal justification = 0 sets x position to left edge of text</span></span>
+<span id="cb77-26"><a href="#cb77-26"></a>    <span class="at">hjust =</span> <span class="dv">0</span>,</span>
+<span id="cb77-27"><a href="#cb77-27"></a>    <span class="at">color =</span> colors<span class="sc">$</span>asym) <span class="sc">+</span></span>
+<span id="cb77-28"><a href="#cb77-28"></a>  <span class="fu">annotate</span>(</span>
+<span id="cb77-29"><a href="#cb77-29"></a>    <span class="st">"text"</span>,</span>
+<span id="cb77-30"><a href="#cb77-30"></a>    <span class="at">label =</span> <span class="st">"growth steepest at midpoint"</span>,</span>
+<span id="cb77-31"><a href="#cb77-31"></a>    <span class="at">x =</span> <span class="dv">49</span>, <span class="at">y =</span> .<span class="dv">05</span>,</span>
+<span id="cb77-32"><a href="#cb77-32"></a>    <span class="at">hjust =</span> <span class="dv">0</span>,</span>
+<span id="cb77-33"><a href="#cb77-33"></a>    <span class="at">color =</span> colors<span class="sc">$</span>mid) <span class="sc">+</span></span>
+<span id="cb77-34"><a href="#cb77-34"></a>  <span class="fu">scale_x_continuous</span>(</span>
+<span id="cb77-35"><a href="#cb77-35"></a>    <span class="at">name =</span> <span class="st">"Age in months"</span>, </span>
+<span id="cb77-36"><a href="#cb77-36"></a>    <span class="at">limits =</span> <span class="fu">c</span>(<span class="dv">0</span>, <span class="dv">96</span>), </span>
+<span id="cb77-37"><a href="#cb77-37"></a>    <span class="at">breaks =</span> scales<span class="sc">::</span><span class="fu">extended_breaks</span>(<span class="at">Q =</span> <span class="fu">c</span>(<span class="dv">24</span>, <span class="dv">12</span>))) <span class="sc">+</span> </span>
+<span id="cb77-38"><a href="#cb77-38"></a>  <span class="fu">scale_y_continuous</span>(</span>
+<span id="cb77-39"><a href="#cb77-39"></a>    <span class="at">name =</span> <span class="st">"Intelligibility"</span>,</span>
+<span id="cb77-40"><a href="#cb77-40"></a>    <span class="at">limits =</span> <span class="fu">c</span>(<span class="dv">0</span>, <span class="cn">NA</span>),</span>
+<span id="cb77-41"><a href="#cb77-41"></a>    <span class="at">labels =</span> scales<span class="sc">::</span><span class="fu">percent_format</span>(<span class="at">accuracy =</span> <span class="dv">1</span>))</span>
+<span id="cb77-42"><a href="#cb77-42"></a></span>
+<span id="cb77-43"><a href="#cb77-43"></a>p</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+
+</div>
+<img data-src="bends-4_files/figure-revealjs/unnamed-chunk-55-1.png" width="960" class="r-stretch"></section>
+<section class="slide level2">
+
+<p><span class="math display">\[f(t) = \frac{\text{asymptote}}{1 + \exp{((\text{mid}~-~t)~*~\text{scale})}}\]</span></p>
+</section>
+<section class="slide level2">
+
+<div class="cell">
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb78"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb78-1"><a href="#cb78-1"></a>annotate_eq <span class="ot">&lt;-</span> <span class="cf">function</span>(label, ...) {</span>
+<span id="cb78-2"><a href="#cb78-2"></a>  <span class="fu">annotate</span>(<span class="st">"text"</span>, <span class="at">x =</span> <span class="dv">0</span>, <span class="at">y =</span> .<span class="dv">6</span>, <span class="at">label =</span> label, <span class="at">parse =</span> <span class="cn">TRUE</span>, </span>
+<span id="cb78-3"><a href="#cb78-3"></a>           <span class="at">hjust =</span> <span class="dv">0</span>, <span class="at">size =</span> <span class="dv">4</span>, ...)</span>
+<span id="cb78-4"><a href="#cb78-4"></a>}</span>
+<span id="cb78-5"><a href="#cb78-5"></a></span>
+<span id="cb78-6"><a href="#cb78-6"></a>slope <span class="ot">&lt;-</span> (.<span class="dv">2</span> <span class="sc">/</span> <span class="dv">4</span>) <span class="sc">*</span> .<span class="dv">8</span></span>
+<span id="cb78-7"><a href="#cb78-7"></a>x_step <span class="ot">&lt;-</span> <span class="fl">2.5</span></span>
+<span id="cb78-8"><a href="#cb78-8"></a>y1 <span class="ot">&lt;-</span> .<span class="dv">4</span> <span class="sc">+</span> slope <span class="sc">*</span> <span class="sc">-</span>x_step</span>
+<span id="cb78-9"><a href="#cb78-9"></a>y2 <span class="ot">&lt;-</span> .<span class="dv">4</span> <span class="sc">+</span> slope <span class="sc">*</span> x_step</span>
+<span id="cb78-10"><a href="#cb78-10"></a></span>
+<span id="cb78-11"><a href="#cb78-11"></a>p <span class="ot">&lt;-</span> p <span class="sc">+</span></span>
+<span id="cb78-12"><a href="#cb78-12"></a>  <span class="fu">geom_segment</span>(</span>
+<span id="cb78-13"><a href="#cb78-13"></a>    <span class="at">x =</span> <span class="dv">48</span> <span class="sc">-</span> x_step, <span class="at">xend =</span> <span class="dv">48</span> <span class="sc">+</span> x_step,</span>
+<span id="cb78-14"><a href="#cb78-14"></a>    <span class="at">y =</span> y1, <span class="at">yend =</span> y2,</span>
+<span id="cb78-15"><a href="#cb78-15"></a>    <span class="at">size =</span> <span class="fl">1.2</span>,</span>
+<span id="cb78-16"><a href="#cb78-16"></a>    <span class="at">color =</span> colors<span class="sc">$</span>scale,</span>
+<span id="cb78-17"><a href="#cb78-17"></a>    <span class="at">arrow =</span> <span class="fu">arrow</span>(<span class="at">ends =</span> <span class="st">"both"</span>, <span class="at">length =</span> <span class="fu">unit</span>(.<span class="dv">1</span>, <span class="st">"in"</span>))) <span class="sc">+</span></span>
+<span id="cb78-18"><a href="#cb78-18"></a>  <span class="fu">annotate</span>(</span>
+<span id="cb78-19"><a href="#cb78-19"></a>    <span class="st">"text"</span>,</span>
+<span id="cb78-20"><a href="#cb78-20"></a>    <span class="at">label =</span> <span class="st">"scale controls slope of curve"</span>,</span>
+<span id="cb78-21"><a href="#cb78-21"></a>    <span class="at">x =</span> <span class="dv">49</span>, <span class="at">y =</span> .<span class="dv">38</span>, </span>
+<span id="cb78-22"><a href="#cb78-22"></a>    <span class="at">color =</span> colors<span class="sc">$</span>scale, <span class="at">hjust =</span> <span class="dv">0</span>)</span>
+<span id="cb78-23"><a href="#cb78-23"></a></span>
+<span id="cb78-24"><a href="#cb78-24"></a><span class="co"># p + annotate_eq(</span></span>
+<span id="cb78-25"><a href="#cb78-25"></a><span class="co">#     label = "f(t)==frac(asymptote, 1 + exp((mid-t)%*%scale))", </span></span>
+<span id="cb78-26"><a href="#cb78-26"></a><span class="co">#     color = colors$fit)</span></span>
+<span id="cb78-27"><a href="#cb78-27"></a></span>
+<span id="cb78-28"><a href="#cb78-28"></a>p1 <span class="ot">&lt;-</span> p <span class="sc">+</span></span>
+<span id="cb78-29"><a href="#cb78-29"></a>  <span class="fu">annotate_eq</span>(</span>
+<span id="cb78-30"><a href="#cb78-30"></a>    <span class="at">label =</span> <span class="st">"</span></span>
+<span id="cb78-31"><a href="#cb78-31"></a><span class="st">    f(t) == frac(</span></span>
+<span id="cb78-32"><a href="#cb78-32"></a><span class="st">      phantom(asymptote), </span></span>
+<span id="cb78-33"><a href="#cb78-33"></a><span class="st">      1 + exp((phantom(mid) - t) %*% phantom(scale))</span></span>
+<span id="cb78-34"><a href="#cb78-34"></a><span class="st">    )"</span>,</span>
+<span id="cb78-35"><a href="#cb78-35"></a>    <span class="at">color =</span> colors<span class="sc">$</span>fit) </span>
+<span id="cb78-36"><a href="#cb78-36"></a></span>
+<span id="cb78-37"><a href="#cb78-37"></a>p2 <span class="ot">&lt;-</span> p1 <span class="sc">+</span> </span>
+<span id="cb78-38"><a href="#cb78-38"></a>  <span class="fu">annotate_eq</span>(</span>
+<span id="cb78-39"><a href="#cb78-39"></a>    <span class="at">label =</span> <span class="st">"</span></span>
+<span id="cb78-40"><a href="#cb78-40"></a><span class="st">    phantom(f(t) == symbol('')) ~ atop(</span></span>
+<span id="cb78-41"><a href="#cb78-41"></a><span class="st">      asymptote, </span></span>
+<span id="cb78-42"><a href="#cb78-42"></a><span class="st">      phantom(1 + exp((mid-t) %*% scale))</span></span>
+<span id="cb78-43"><a href="#cb78-43"></a><span class="st">    )"</span>,</span>
+<span id="cb78-44"><a href="#cb78-44"></a>    <span class="at">color =</span> colors<span class="sc">$</span>asym)</span>
+<span id="cb78-45"><a href="#cb78-45"></a></span>
+<span id="cb78-46"><a href="#cb78-46"></a>p2 <span class="sc">+</span></span>
+<span id="cb78-47"><a href="#cb78-47"></a>  <span class="fu">annotate_eq</span>(</span>
+<span id="cb78-48"><a href="#cb78-48"></a>    <span class="at">label =</span> <span class="st">"</span></span>
+<span id="cb78-49"><a href="#cb78-49"></a><span class="st">    phantom(f(t) == symbol('')) ~ atop(</span></span>
+<span id="cb78-50"><a href="#cb78-50"></a><span class="st">      phantom(asymptote), </span></span>
+<span id="cb78-51"><a href="#cb78-51"></a><span class="st">      phantom(1 + exp((mid-t) * symbol(''))) ~ scale</span></span>
+<span id="cb78-52"><a href="#cb78-52"></a><span class="st">    )"</span>,</span>
+<span id="cb78-53"><a href="#cb78-53"></a>    <span class="at">color =</span> colors<span class="sc">$</span>scale) <span class="sc">+</span></span>
+<span id="cb78-54"><a href="#cb78-54"></a>  <span class="fu">annotate_eq</span>(</span>
+<span id="cb78-55"><a href="#cb78-55"></a>    <span class="at">label =</span> <span class="st">"</span></span>
+<span id="cb78-56"><a href="#cb78-56"></a><span class="st">    phantom(f(t) == symbol('')) ~ atop(</span></span>
+<span id="cb78-57"><a href="#cb78-57"></a><span class="st">      phantom(asymptote), </span></span>
+<span id="cb78-58"><a href="#cb78-58"></a><span class="st">      paste(</span></span>
+<span id="cb78-59"><a href="#cb78-59"></a><span class="st">        phantom(paste(1 + exp, symbol(')'), symbol(')'))),</span></span>
+<span id="cb78-60"><a href="#cb78-60"></a><span class="st">        mid,</span></span>
+<span id="cb78-61"><a href="#cb78-61"></a><span class="st">        phantom(paste(symbol('-'), t, symbol(')') * scale))</span></span>
+<span id="cb78-62"><a href="#cb78-62"></a><span class="st">      )</span></span>
+<span id="cb78-63"><a href="#cb78-63"></a><span class="st">    )"</span>,</span>
+<span id="cb78-64"><a href="#cb78-64"></a>    <span class="at">color =</span> colors<span class="sc">$</span>mid)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+
+</div>
+<img data-src="bends-4_files/figure-revealjs/unnamed-chunk-56-1.png" width="960" class="r-stretch"></section>
+<section class="slide level2">
+
+<div class="cell">
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb79"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb79-1"><a href="#cb79-1"></a><span class="fu">library</span>(brms)</span>
+<span id="cb79-2"><a href="#cb79-2"></a></span>
+<span id="cb79-3"><a href="#cb79-3"></a>data <span class="ot">&lt;-</span> <span class="fu">tibble</span>(</span>
+<span id="cb79-4"><a href="#cb79-4"></a>  <span class="at">age =</span> <span class="fu">c</span>(<span class="dv">38</span>, <span class="dv">45</span>, <span class="dv">52</span>, <span class="dv">61</span>, <span class="dv">80</span>, <span class="dv">74</span>), </span>
+<span id="cb79-5"><a href="#cb79-5"></a>  <span class="at">prop =</span> <span class="fu">c</span>(<span class="fl">0.146</span>, <span class="fl">0.241</span>, <span class="fl">0.571</span>, <span class="fl">0.745</span>, <span class="fl">0.843</span>, <span class="fl">0.738</span>)</span>
+<span id="cb79-6"><a href="#cb79-6"></a>)</span>
+<span id="cb79-7"><a href="#cb79-7"></a></span>
+<span id="cb79-8"><a href="#cb79-8"></a>inv_logit <span class="ot">&lt;-</span> <span class="cf">function</span>(x) <span class="dv">1</span> <span class="sc">/</span> (<span class="dv">1</span> <span class="sc">+</span> <span class="fu">exp</span>(<span class="sc">-</span>x))</span>
+<span id="cb79-9"><a href="#cb79-9"></a></span>
+<span id="cb79-10"><a href="#cb79-10"></a>model_formula <span class="ot">&lt;-</span> <span class="fu">bf</span>(</span>
+<span id="cb79-11"><a href="#cb79-11"></a>  <span class="co"># Logistic curve</span></span>
+<span id="cb79-12"><a href="#cb79-12"></a>  prop <span class="sc">~</span> <span class="fu">inv_logit</span>(asymlogit) <span class="sc">*</span> <span class="fu">inv</span>(<span class="dv">1</span> <span class="sc">+</span> <span class="fu">exp</span>((mid <span class="sc">-</span> age) <span class="sc">*</span> <span class="fu">exp</span>(scale))),</span>
+<span id="cb79-13"><a href="#cb79-13"></a>  <span class="co"># Each term in the logistic equation gets a linear model</span></span>
+<span id="cb79-14"><a href="#cb79-14"></a>  asymlogit <span class="sc">~</span> <span class="dv">1</span>,</span>
+<span id="cb79-15"><a href="#cb79-15"></a>  mid <span class="sc">~</span> <span class="dv">1</span>,</span>
+<span id="cb79-16"><a href="#cb79-16"></a>  scale <span class="sc">~</span> <span class="dv">1</span>,</span>
+<span id="cb79-17"><a href="#cb79-17"></a>  <span class="co"># Precision</span></span>
+<span id="cb79-18"><a href="#cb79-18"></a>  phi <span class="sc">~</span> <span class="dv">1</span>,</span>
+<span id="cb79-19"><a href="#cb79-19"></a>  <span class="co"># This is a nonlinear Beta regression model</span></span>
+<span id="cb79-20"><a href="#cb79-20"></a>  <span class="at">nl =</span> <span class="cn">TRUE</span>, </span>
+<span id="cb79-21"><a href="#cb79-21"></a>  <span class="at">family =</span> <span class="fu">Beta</span>(<span class="at">link =</span> identity)</span>
+<span id="cb79-22"><a href="#cb79-22"></a>)</span>
+<span id="cb79-23"><a href="#cb79-23"></a></span>
+<span id="cb79-24"><a href="#cb79-24"></a>prior_fixef <span class="ot">&lt;-</span> <span class="fu">c</span>(</span>
+<span id="cb79-25"><a href="#cb79-25"></a>  <span class="co"># Point of steepest growth is age 4 plus/minus 2 years</span></span>
+<span id="cb79-26"><a href="#cb79-26"></a>  <span class="fu">prior</span>(<span class="fu">normal</span>(<span class="dv">48</span>, <span class="dv">12</span>), <span class="at">nlpar =</span> <span class="st">"mid"</span>, <span class="at">coef =</span> <span class="st">"Intercept"</span>),</span>
+<span id="cb79-27"><a href="#cb79-27"></a>  <span class="fu">prior</span>(<span class="fu">normal</span>(<span class="fl">1.25</span>, .<span class="dv">75</span>), <span class="at">nlpar =</span> <span class="st">"asymlogit"</span>, <span class="at">coef =</span> <span class="st">"Intercept"</span>),</span>
+<span id="cb79-28"><a href="#cb79-28"></a>  <span class="fu">prior</span>(<span class="fu">normal</span>(<span class="sc">-</span><span class="dv">2</span>, <span class="dv">1</span>), <span class="at">nlpar =</span> <span class="st">"scale"</span>, <span class="at">coef =</span> <span class="st">"Intercept"</span>)</span>
+<span id="cb79-29"><a href="#cb79-29"></a>)</span>
+<span id="cb79-30"><a href="#cb79-30"></a></span>
+<span id="cb79-31"><a href="#cb79-31"></a>prior_phi <span class="ot">&lt;-</span> <span class="fu">c</span>(</span>
+<span id="cb79-32"><a href="#cb79-32"></a>  <span class="fu">prior</span>(<span class="fu">normal</span>(<span class="dv">2</span>, <span class="dv">1</span>), <span class="at">dpar =</span> <span class="st">"phi"</span>, <span class="at">class =</span> <span class="st">"Intercept"</span>)</span>
+<span id="cb79-33"><a href="#cb79-33"></a>)</span>
+<span id="cb79-34"><a href="#cb79-34"></a></span>
+<span id="cb79-35"><a href="#cb79-35"></a>fit <span class="ot">&lt;-</span> <span class="fu">brm</span>(</span>
+<span id="cb79-36"><a href="#cb79-36"></a>  model_formula,</span>
+<span id="cb79-37"><a href="#cb79-37"></a>  <span class="at">data =</span> data,</span>
+<span id="cb79-38"><a href="#cb79-38"></a>  <span class="at">prior =</span> <span class="fu">c</span>(prior_fixef, prior_phi),</span>
+<span id="cb79-39"><a href="#cb79-39"></a>  <span class="at">iter =</span> <span class="dv">2000</span>,</span>
+<span id="cb79-40"><a href="#cb79-40"></a>  <span class="at">chains =</span> <span class="dv">4</span>,</span>
+<span id="cb79-41"><a href="#cb79-41"></a>  <span class="at">cores =</span> <span class="dv">1</span>,</span>
+<span id="cb79-42"><a href="#cb79-42"></a>  <span class="at">control =</span> <span class="fu">list</span>(<span class="at">adapt_delta =</span> <span class="fl">0.9</span>, <span class="at">max_treedepth =</span> <span class="dv">15</span>), </span>
+<span id="cb79-43"><a href="#cb79-43"></a>  <span class="at">seed =</span> <span class="dv">20211014</span>,</span>
+<span id="cb79-44"><a href="#cb79-44"></a>  <span class="at">file =</span> <span class="st">"glm_growth_curve"</span>,</span>
+<span id="cb79-45"><a href="#cb79-45"></a>  <span class="at">backend =</span> <span class="st">"cmdstanr"</span>,</span>
+<span id="cb79-46"><a href="#cb79-46"></a>  <span class="at">refresh =</span> <span class="dv">0</span></span>
+<span id="cb79-47"><a href="#cb79-47"></a>)</span>
+<span id="cb79-48"><a href="#cb79-48"></a></span>
+<span id="cb79-49"><a href="#cb79-49"></a>draws_posterior <span class="ot">&lt;-</span> data <span class="sc">%&gt;%</span></span>
+<span id="cb79-50"><a href="#cb79-50"></a>  tidyr<span class="sc">::</span><span class="fu">expand</span>(<span class="at">age =</span> <span class="dv">0</span><span class="sc">:</span><span class="dv">100</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb79-51"><a href="#cb79-51"></a>  tidybayes<span class="sc">::</span><span class="fu">add_epred_draws</span>(fit, <span class="at">ndraws =</span> <span class="dv">100</span>) </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+</section>
+<section class="slide level2">
+
+<div class="cell">
+<div class="sourceCode cell-code" id="cb80"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb80-1"><a href="#cb80-1"></a><span class="fu">summary</span>(fit)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code> Family: beta 
+  Links: mu = identity; phi = log 
+Formula: prop ~ inv_logit(asymlogit) * inv(1 + exp((mid - age) * exp(scale))) 
+         asymlogit ~ 1
+         mid ~ 1
+         scale ~ 1
+         phi ~ 1
+   Data: data (Number of observations: 6) 
+  Draws: 4 chains, each with iter = 2000; warmup = 1000; thin = 1;
+         total post-warmup draws = 4000
+
+Population-Level Effects: 
+                    Estimate Est.Error l-95% CI u-95% CI Rhat Bulk_ESS Tail_ESS
+phi_Intercept           2.99      0.73     1.53     4.36 1.00     1087     1678
+asymlogit_Intercept     1.46      0.41     0.71     2.40 1.00     1819     1891
+mid_Intercept          47.60      3.27    40.21    53.40 1.00     1544     1143
+scale_Intercept        -1.96      0.40    -2.82    -1.22 1.00     1462     1591
+
+Draws were sampled using sample(hmc). For each parameter, Bulk_ESS
+and Tail_ESS are effective sample size measures, and Rhat is the potential
+scale reduction factor on split chains (at convergence, Rhat = 1).</code></pre>
+</div>
+</div>
+</section>
+<section class="slide level2">
+
+<div class="cell">
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb82"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb82-1"><a href="#cb82-1"></a><span class="fu">library</span>(tidybayes)</span>
+<span id="cb82-2"><a href="#cb82-2"></a><span class="fu">ggplot</span>(draws_posterior) <span class="sc">+</span></span>
+<span id="cb82-3"><a href="#cb82-3"></a>  <span class="fu">aes</span>(<span class="at">x =</span> age, <span class="at">y =</span> .epred) <span class="sc">+</span></span>
+<span id="cb82-4"><a href="#cb82-4"></a> <span class="fu">stat_lineribbon</span>(<span class="at">.width =</span> .<span class="dv">95</span>, <span class="at">alpha =</span> .<span class="dv">2</span>) <span class="sc">+</span></span>
+<span id="cb82-5"><a href="#cb82-5"></a>  <span class="fu">geom_point</span>(</span>
+<span id="cb82-6"><a href="#cb82-6"></a>    <span class="fu">aes</span>(<span class="at">y =</span> prop), </span>
+<span id="cb82-7"><a href="#cb82-7"></a>    <span class="at">data =</span> data</span>
+<span id="cb82-8"><a href="#cb82-8"></a>  ) <span class="sc">+</span></span>
+<span id="cb82-9"><a href="#cb82-9"></a>  <span class="fu">expand_limits</span>(<span class="at">y =</span> <span class="dv">0</span><span class="sc">:</span><span class="dv">1</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+
+</div>
+<img data-src="bends-4_files/figure-revealjs/unnamed-chunk-59-1.png" width="960" class="r-stretch"></section>
 <section id="non-linear-models" class="slide level2">
 <h2>Non-linear models</h2>
+<p>Standard GLM can be written this way, which reflects a linear combination <span class="math display">\[ \eta_n = \sum_{i = 1}^K b_i x_{ni}\]</span></p>
+<p>Nonlinear models cannot, such as: <span class="math display">\[\eta_n = b_1 \exp(b_2 x_n)\]</span></p>
+<ul>
+<li>Many nonlinear functions exist, and can be used in standard regression. We can of course take these functions and apply them to longitudinal data.</li>
+</ul>
 </section>
+<section class="slide level2">
+
+<p>Insurance example <span class="math display">\[ \mu_{AY, dev} = ult_{AY}
+\left(1 - \exp\left(- \left( \frac{dev}{\theta} \right)^\omega \right)
+\right)\]</span></p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb83"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb83-1"><a href="#cb83-1"></a><span class="fu">data</span>(loss)</span>
+<span id="cb83-2"><a href="#cb83-2"></a><span class="fu">head</span>(loss)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>    AY dev      cum premium
+1 1991   6  357.848   10000
+2 1991  18 1124.788   10000
+3 1991  30 1735.330   10000
+4 1991  42 2182.708   10000
+5 1991  54 2745.596   10000
+6 1991  66 3319.994   10000</code></pre>
+</div>
+</div>
+</section>
+<section class="slide level2">
+
+<div class="cell">
+<div class="sourceCode cell-code" id="cb85"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb85-1"><a href="#cb85-1"></a>fit_loss <span class="ot">&lt;-</span> <span class="fu">brm</span>(</span>
+<span id="cb85-2"><a href="#cb85-2"></a>  <span class="fu">bf</span>(cum <span class="sc">~</span> ult <span class="sc">*</span> (<span class="dv">1</span> <span class="sc">-</span> <span class="fu">exp</span>(<span class="sc">-</span>(dev<span class="sc">/</span>theta)<span class="sc">^</span>omega)),</span>
+<span id="cb85-3"><a href="#cb85-3"></a>     ult <span class="sc">~</span> <span class="dv">1</span> <span class="sc">+</span> (<span class="dv">1</span><span class="sc">|</span>AY), omega <span class="sc">~</span> <span class="dv">1</span>, theta <span class="sc">~</span> <span class="dv">1</span>,</span>
+<span id="cb85-4"><a href="#cb85-4"></a>     <span class="at">nl =</span> <span class="cn">TRUE</span>),</span>
+<span id="cb85-5"><a href="#cb85-5"></a>  <span class="at">data =</span> loss, <span class="at">family =</span> <span class="fu">gaussian</span>(),</span>
+<span id="cb85-6"><a href="#cb85-6"></a>  <span class="at">prior =</span> <span class="fu">c</span>(</span>
+<span id="cb85-7"><a href="#cb85-7"></a>    <span class="fu">prior</span>(<span class="fu">normal</span>(<span class="dv">5000</span>, <span class="dv">1000</span>), <span class="at">nlpar =</span> <span class="st">"ult"</span>),</span>
+<span id="cb85-8"><a href="#cb85-8"></a>    <span class="fu">prior</span>(<span class="fu">normal</span>(<span class="dv">1</span>, <span class="dv">2</span>), <span class="at">nlpar =</span> <span class="st">"omega"</span>),</span>
+<span id="cb85-9"><a href="#cb85-9"></a>    <span class="fu">prior</span>(<span class="fu">normal</span>(<span class="dv">45</span>, <span class="dv">10</span>), <span class="at">nlpar =</span> <span class="st">"theta"</span>)),</span>
+<span id="cb85-10"><a href="#cb85-10"></a>  <span class="at">control =</span> <span class="fu">list</span>(<span class="at">adapt_delta =</span> <span class="fl">0.9</span>),</span>
+<span id="cb85-11"><a href="#cb85-11"></a>  <span class="at">backend =</span> <span class="st">"cmdstanr"</span>,</span>
+<span id="cb85-12"><a href="#cb85-12"></a>  <span class="at">file =</span> <span class="st">"loss"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section class="slide level2">
+
+<div class="cell">
+<div class="sourceCode cell-code" id="cb86"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb86-1"><a href="#cb86-1"></a><span class="fu">conditional_effects</span>(fit_loss)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+
+</div>
+<img data-src="bends-4_files/figure-revealjs/unnamed-chunk-62-1.png" width="960" class="r-stretch"></section>
+<section class="slide level2">
+
+<div class="cell">
+<div class="sourceCode cell-code" id="cb87"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb87-1"><a href="#cb87-1"></a><span class="fu">summary</span>(fit_loss)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code> Family: gaussian 
+  Links: mu = identity; sigma = identity 
+Formula: cum ~ ult * (1 - exp(-(dev/theta)^omega)) 
+         ult ~ 1 + (1 | AY)
+         omega ~ 1
+         theta ~ 1
+   Data: loss (Number of observations: 55) 
+  Draws: 4 chains, each with iter = 2000; warmup = 1000; thin = 1;
+         total post-warmup draws = 4000
+
+Group-Level Effects: 
+~AY (Number of levels: 10) 
+                  Estimate Est.Error l-95% CI u-95% CI Rhat Bulk_ESS Tail_ESS
+sd(ult_Intercept)   744.76    226.22   431.67  1324.21 1.01     1016     1645
+
+Population-Level Effects: 
+                Estimate Est.Error l-95% CI u-95% CI Rhat Bulk_ESS Tail_ESS
+ult_Intercept    5295.61    285.14  4734.32  5875.46 1.00      983     1309
+omega_Intercept     1.34      0.05     1.24     1.43 1.00     2251     2279
+theta_Intercept    46.14      2.06    42.60    50.65 1.00     2089     1902
+
+Family Specific Parameters: 
+      Estimate Est.Error l-95% CI u-95% CI Rhat Bulk_ESS Tail_ESS
+sigma   140.09     15.73   113.00   174.15 1.00     2258     2461
+
+Draws were sampled using sample(hmc). For each parameter, Bulk_ESS
+and Tail_ESS are effective sample size measures, and Rhat is the potential
+scale reduction factor on split chains (at convergence, Rhat = 1).</code></pre>
+</div>
+</div>
+</section>
+<section class="slide level2">
+
+<p>Wright &amp; Jackson, 2022 JPSP asymptoptic growth curve example</p>
+<p><span class="math display">\[Y_{ij}=\ a_j-\left(a_j-\ b_j\right)\ast e^{\left(-c_j{time}_{ij}\right)}\ \]</span> <span class="math display">\[b_j=\ \gamma_b0+\ U_bj\]</span> <span class="math display">\[c_j=\ \gamma_{c0}+\ U_{cj}\]</span> <span class="math inline">\(b_j\)</span> can be thought of as the intercept, whereas <span class="math inline">\(c_j\)</span> is the slope. <span class="math inline">\(a_j\)</span> is maximum possible value</p>
+</section>
+<section class="slide level2">
+
+
+<img data-src="nonlinear.png" class="r-stretch"></section>
 <section id="gams" class="slide level2">
 <h2>GAMs</h2>
 <ul>

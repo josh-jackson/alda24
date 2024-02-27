@@ -27,8 +27,7 @@ Polynomials (quadratic) level 1: $${Y}_{ij} = \beta_{0j}  + \beta_{1j}(Time_{ij}
 
 Level 2: $${\beta}_{0j} = \gamma_{00} +   U_{0j}$$
 
-$${\beta}_{1j} = \gamma_{10} +  U_{1j}$$ 
-$${\beta}_{2j} = \gamma_{20} +  U_{2j}$$
+$${\beta}_{1j} = \gamma_{10} +  U_{1j}$$ $${\beta}_{2j} = \gamma_{20} +  U_{2j}$$
 
 ## MLM poly example
 
@@ -619,7 +618,7 @@ ggplot(aes(x = wave, y = extra, group = ID, color = factor(ID))) +
 
 ## Discontinuity in level, not in slopes
 
-- The previous models modified time, and thus the trajectory. But level 1 predictors also modify the trajectory. We will cover these in more detail later, but for now... 
+-   The previous models modified time, and thus the trajectory. But level 1 predictors also modify the trajectory. We will cover these in more detail later, but for now...
 
 ```{r}
 #| code-fold: true
@@ -680,7 +679,6 @@ p1
 
 ```
 
-
 ## Splines
 
 ```{r}
@@ -724,10 +722,440 @@ p2
 
 ## Generalized growth curves
 
-- Often times your DV is not Logistic and 
+-   Often times your DV is not assumed to be governed by a normal data generating process. For example, we are working with count variables, or with dichotomous variables. 
+
+- Just like with regression, you would fit different response distribution (binomial, poisson, beta, etc) and then use a link function to create a linear formula. 
+
+- These same techniques can be applied to MLMs and thus longitudinal MLMs. 
+
+
+-------
+
+
+$$y_i \sim \operatorname{Bernoulli}(p_i)$$
+$$p_i = \operatorname{logit}^{-1}(b_0)$$
+$$\operatorname{logit}(x) = \log \left ( \frac{x}{1 - x} \right )$$
+
+------
+
+
+$$y_{ij}  \sim \operatorname{Bernoulli}(p_{ij}) \\$$
+$$\operatorname{logit}(p_{ij})  = \gamma_{00} + \gamma_{10} \text{time}_{ij} + [\text{U}_{0j} + \text{U}_{1j} \text{time}_{ij}]$$
+
+--------
+
+```{r}
+#| code-fold: true
+library(dplyr)
+dogs <- read.csv("~/Library/CloudStorage/Box-Box/5165 Applied Longitudinal Data Analysis/2024/dogs.txt", sep="") %>% rename(dog = Dog)
+dogs
+```
+
+-----
+
+```{r}
+#| code-fold: true
+dogs <-
+  dogs %>% 
+  pivot_longer(-dog, values_to = "y") %>% 
+  mutate(trial = str_remove(name, "t") %>% as.double()) 
+dogs
+```
+
+--------
+
+```{r}
+#| code-fold: true
+# define the dog subset
+set.seed(6)
+
+subset <- sample(1:30, size = 8)
+
+# subset the data
+dogs %>% 
+  filter(dog %in% subset) %>% 
+
+  # plot!
+  ggplot(aes(x = trial, y = y)) +
+  geom_point() +
+  scale_y_continuous(breaks = 0:1) +
+  theme(panel.grid = element_blank()) +
+  facet_wrap(~ dog, ncol = 4, labeller = label_both)
+```
+
+
+-------
+
+```{r}
+library(brms)
+growth.log <- 
+  brm(data = dogs,
+      family = bernoulli,
+      y ~ 0 + Intercept + trial + (1 + trial | dog),
+      prior = c(prior(normal(-2, 1), class = b, coef = Intercept),
+                prior(normal(0.25, 0.25), class = b),
+                prior(exponential(1), class = sd),
+                prior(lkj(4), class = cor)),
+      iter = 2000, warmup = 1000, cores = 3, chains = 3,
+      seed = 6,
+      backend = "cmdstanr",
+      file = "growth.log")
+```
+
+------
+
+```{r}
+summary(growth.log)
+```
+
+
+------
+
+```{r}
+conditional_effects(growth.log)
+```
+
+
+
+---------
+
+The probability that an unfamiliar listener understands what a child says, develops from age 3 to age 8. Example pulled from T.J. Mahr's website
+
+Proportions, bounded by 0 - 1. Nonlinear in that they are going to be logistic shapped. 
+
+```{r}
+#| code-fold: true
+library(tidyverse)
+points <- tibble(
+  age = c(38, 45, 52, 61, 80, 74), 
+  prop = c(0.146, 0.241, 0.571, 0.745, 0.843, 0.738))
+
+colors <- list(
+  data = "#41414550",
+  fit = "#414145")
+
+ggplot(points) + 
+  aes(x = age, y = prop) + 
+  geom_point(size = 3.5, color = colors$data) +
+  scale_x_continuous(
+    name = "Age in months", 
+    limits = c(0, 96), 
+    # Because age is in months, I want breaks to land on multiples
+    # of 12. The `Q` in `extended_breaks()` are "nice" numbers to use
+    # for axis breaks.
+    breaks = scales::extended_breaks(Q = c(24, 12))) + 
+  scale_y_continuous(
+    name = "Intelligibility",
+    limits = c(0, NA),
+    labels = scales::percent_format(accuracy = 1))
+```
+
+
+-----------
+
+```{r}
+#| code-fold: true
+xs <- seq(0, 96, length.out = 80)
+
+# Create the curve from the equation parameters
+trend <- tibble(
+  age = xs,
+  asymptote = .8,
+  scale = .2,
+  midpoint = 48,
+  prop = asymptote / (1 + exp((midpoint - age) * scale)))
+
+ggplot(points) + 
+  aes(x = age, y = prop) + 
+  geom_line(data = trend, color = colors$fit) +
+  geom_point(size = 3.5, color = colors$data) +
+  scale_x_continuous(
+    name = "Age in months", 
+    limits = c(0, 96), 
+    breaks = scales::extended_breaks(Q = c(24, 12))) + 
+  scale_y_continuous(
+    name = "Intelligibility",
+    limits = c(0, NA),
+    labels = scales::percent_format(accuracy = 1))
+```
+
+
+-------
+
+```{r}
+#| code-fold: true
+#| 
+colors$asym <- "#E7552C"
+colors$mid <- "#3B7B9E"
+colors$scale <- "#1FA35C"
+
+p <- ggplot(points) +
+  aes(x = age, y = prop) +
+  annotate(
+    "segment",
+    color = colors$mid,
+    x = 48, xend = 48,
+    y = 0, yend = .4,
+    linetype = "dashed") +
+  annotate(
+    "segment",
+    color = colors$asym,
+    x = 20, xend = Inf,
+    y = .8, yend = .8,
+    linetype = "dashed") +
+  geom_line(data = trend, size = 1, color = colors$fit) +
+  geom_point(size = 3.5, color = colors$data) +
+  annotate(
+    "text",
+    label = "growth plateaus at asymptote",
+    x = 20, y = .84,
+    # horizontal justification = 0 sets x position to left edge of text
+    hjust = 0,
+    color = colors$asym) +
+  annotate(
+    "text",
+    label = "growth steepest at midpoint",
+    x = 49, y = .05,
+    hjust = 0,
+    color = colors$mid) +
+  scale_x_continuous(
+    name = "Age in months", 
+    limits = c(0, 96), 
+    breaks = scales::extended_breaks(Q = c(24, 12))) + 
+  scale_y_continuous(
+    name = "Intelligibility",
+    limits = c(0, NA),
+    labels = scales::percent_format(accuracy = 1))
+
+p
+```
+
+
+-------
+
+$$f(t) = \frac{\text{asymptote}}{1 + \exp{((\text{mid}~-~t)~*~\text{scale})}}$$
+
+
+------
+
+```{r}
+#| code-fold: true
+#| 
+annotate_eq <- function(label, ...) {
+  annotate("text", x = 0, y = .6, label = label, parse = TRUE, 
+           hjust = 0, size = 4, ...)
+}
+
+slope <- (.2 / 4) * .8
+x_step <- 2.5
+y1 <- .4 + slope * -x_step
+y2 <- .4 + slope * x_step
+
+p <- p +
+  geom_segment(
+    x = 48 - x_step, xend = 48 + x_step,
+    y = y1, yend = y2,
+    size = 1.2,
+    color = colors$scale,
+    arrow = arrow(ends = "both", length = unit(.1, "in"))) +
+  annotate(
+    "text",
+    label = "scale controls slope of curve",
+    x = 49, y = .38, 
+    color = colors$scale, hjust = 0)
+
+# p + annotate_eq(
+#     label = "f(t)==frac(asymptote, 1 + exp((mid-t)%*%scale))", 
+#     color = colors$fit)
+
+p1 <- p +
+  annotate_eq(
+    label = "
+    f(t) == frac(
+      phantom(asymptote), 
+      1 + exp((phantom(mid) - t) %*% phantom(scale))
+    )",
+    color = colors$fit) 
+
+p2 <- p1 + 
+  annotate_eq(
+    label = "
+    phantom(f(t) == symbol('')) ~ atop(
+      asymptote, 
+      phantom(1 + exp((mid-t) %*% scale))
+    )",
+    color = colors$asym)
+
+p2 +
+  annotate_eq(
+    label = "
+    phantom(f(t) == symbol('')) ~ atop(
+      phantom(asymptote), 
+      phantom(1 + exp((mid-t) * symbol(''))) ~ scale
+    )",
+    color = colors$scale) +
+  annotate_eq(
+    label = "
+    phantom(f(t) == symbol('')) ~ atop(
+      phantom(asymptote), 
+      paste(
+        phantom(paste(1 + exp, symbol(')'), symbol(')'))),
+        mid,
+        phantom(paste(symbol('-'), t, symbol(')') * scale))
+      )
+    )",
+    color = colors$mid)
+
+```
+
+
+
+----------
+
+```{r}
+#| code-fold: true
+library(brms)
+
+data <- tibble(
+  age = c(38, 45, 52, 61, 80, 74), 
+  prop = c(0.146, 0.241, 0.571, 0.745, 0.843, 0.738)
+)
+
+inv_logit <- function(x) 1 / (1 + exp(-x))
+
+model_formula <- bf(
+  # Logistic curve
+  prop ~ inv_logit(asymlogit) * inv(1 + exp((mid - age) * exp(scale))),
+  # Each term in the logistic equation gets a linear model
+  asymlogit ~ 1,
+  mid ~ 1,
+  scale ~ 1,
+  # Precision
+  phi ~ 1,
+  # This is a nonlinear Beta regression model
+  nl = TRUE, 
+  family = Beta(link = identity)
+)
+
+prior_fixef <- c(
+  # Point of steepest growth is age 4 plus/minus 2 years
+  prior(normal(48, 12), nlpar = "mid", coef = "Intercept"),
+  prior(normal(1.25, .75), nlpar = "asymlogit", coef = "Intercept"),
+  prior(normal(-2, 1), nlpar = "scale", coef = "Intercept")
+)
+
+prior_phi <- c(
+  prior(normal(2, 1), dpar = "phi", class = "Intercept")
+)
+
+fit <- brm(
+  model_formula,
+  data = data,
+  prior = c(prior_fixef, prior_phi),
+  iter = 2000,
+  chains = 4,
+  cores = 1,
+  control = list(adapt_delta = 0.9, max_treedepth = 15), 
+  seed = 20211014,
+  file = "glm_growth_curve",
+  backend = "cmdstanr",
+  refresh = 0
+)
+
+draws_posterior <- data %>%
+  tidyr::expand(age = 0:100) %>%
+  tidybayes::add_epred_draws(fit, ndraws = 100) 
+```
+
+---------
+
+```{r}
+summary(fit)
+```
+
+
+------
+
+```{r}
+#| code-fold: true
+library(tidybayes)
+ggplot(draws_posterior) +
+  aes(x = age, y = .epred) +
+ stat_lineribbon(.width = .95, alpha = .2) +
+  geom_point(
+    aes(y = prop), 
+    data = data
+  ) +
+  expand_limits(y = 0:1)
+```
 
 
 ## Non-linear models
+
+Standard GLM can be written this way, which reflects a linear combination 
+$$ \eta_n = \sum_{i = 1}^K b_i x_{ni}$$
+
+Nonlinear models cannot, such as: 
+$$\eta_n = b_1 \exp(b_2 x_n)$$
+
+- Many nonlinear functions exist, and can be used in standard regression. We can of course take these functions and apply them to longitudinal data. 
+
+----
+
+Insurance example
+$$ \mu_{AY, dev} = ult_{AY}
+\left(1 - \exp\left(- \left( \frac{dev}{\theta} \right)^\omega \right)
+\right)$$ 
+
+```{r}
+data(loss)
+head(loss)
+```
+
+
+------
+
+```{r}
+
+fit_loss <- brm(
+  bf(cum ~ ult * (1 - exp(-(dev/theta)^omega)),
+     ult ~ 1 + (1|AY), omega ~ 1, theta ~ 1,
+     nl = TRUE),
+  data = loss, family = gaussian(),
+  prior = c(
+    prior(normal(5000, 1000), nlpar = "ult"),
+    prior(normal(1, 2), nlpar = "omega"),
+    prior(normal(45, 10), nlpar = "theta")),
+  control = list(adapt_delta = 0.9),
+  backend = "cmdstanr",
+  file = "loss")
+```
+
+
+--------
+
+```{r}
+conditional_effects(fit_loss)
+```
+
+-----
+```{r}
+summary(fit_loss)
+```
+
+
+-------
+
+Wright & Jackson, 2022 JPSP asymptoptic growth curve example
+
+$$Y_{ij}=\ a_j-\left(a_j-\ b_j\right)\ast e^{\left(-c_j{time}_{ij}\right)}\ $$
+$$b_j=\ \gamma_b0+\ U_bj$$
+$$c_j=\ \gamma_{c0}+\ U_{cj}$$
+$b_j$ can be thought of as the intercept, whereas $c_j$ is the slope. $a_j$ is maximum possible value
+
+------
+
+![](nonlinear.png)
 
 
 
@@ -735,30 +1163,27 @@ p2
 
 -   Standard longitudinal models are simple to understand (lines!), but fail to capture the ebbs and flows of many time series. Yet there are downsides to polynomial models, as they end up making bad predictions at the ends
 
-- We can do localized regression such as lowess but those are non-parameteric and thus we cannot do standard inferential tests on this  
+-   We can do localized regression such as lowess but those are non-parameteric and thus we cannot do standard inferential tests on this
 
-- GAMs offer a middle ground: they can be fit to complex, nonlinear relationships and make good predictions in these cases, but we are still able to do inferential statistics and understand and explain the underlying structure of our models 
-
+-   GAMs offer a middle ground: they can be fit to complex, nonlinear relationships and make good predictions in these cases, but we are still able to do inferential statistics and understand and explain the underlying structure of our models
 
 ## Generalized additive models
 
-Similar to going from general linear model to generalized linear model. One more generalization. 
+Similar to going from general linear model to generalized linear model. One more generalization.
 
-$$y \sim ExpoFam(\mu, etc.)$$
-$$E(y) = \mu$$
+$$y \sim ExpoFam(\mu, etc.)$$ $$E(y) = \mu$$
 
 $$g(\mu) = b_0 + f(x_1) + f(x_2) \;...\;+f(x_p)$$
 
-exponential family distribution, and  μ   is still related to the model predictors via a link function. The key difference is that the linear predictor now incorporates smooth functions of at least some (possibly all) features, represented as f(x), and this will allow for nonlinear relationships between the features and the target variable y.
+exponential family distribution, and μ is still related to the model predictors via a link function. The key difference is that the linear predictor now incorporates smooth functions of at least some (possibly all) features, represented as f(x), and this will allow for nonlinear relationships between the features and the target variable y.
 
+## When to use?
 
-## When to use? 
-
-- Take a look at your scatter plots, are they monotononicly linear? 
-- Residuals vs fitted look off? QQ plot looking bent? 
-- Transformations help in general but make edge cases even worse? 
-- Polynomial not cutting it
-- You want to be as flexible as possible
+-   Take a look at your scatter plots, are they monotononicly linear?
+-   Residuals vs fitted look off? QQ plot looking bent?
+-   Transformations help in general but make edge cases even worse?
+-   Polynomial not cutting it
+-   You want to be as flexible as possible
 
 ## Simplified GAM
 
@@ -766,32 +1191,24 @@ $$y = f(x) + \epsilon$$
 
 choosing a basis, which in technical terms means choosing a space of functions for which (f) is some element of it.
 
-$$y = f(x) + \epsilon = \sum_{j=1}^{d}F_j(x)\beta_j + \epsilon$$
-Above, each Fj is a basis function that is the transformed x depending on the type of basis considered, and the b are the corresponding regression coefficients. 
+$$y = f(x) + \epsilon = \sum_{j=1}^{d}F_j(x)\beta_j + \epsilon$$ Above, each Fj is a basis function that is the transformed x depending on the type of basis considered, and the b are the corresponding regression coefficients.
 
-----------
+------------------------------------------------------------------------
 
-Can think of the basis function as a polynomial with d = 2 (but it could be many other things too)
-$$y = f(x) + \epsilon = \sum_{j=1}^{d}F_j(x)\beta_j + \epsilon$$
+Can think of the basis function as a polynomial with d = 2 (but it could be many other things too) $$y = f(x) + \epsilon = \sum_{j=1}^{d}F_j(x)\beta_j + \epsilon$$
 
-$$f(x) = b_0 + b_1\cdot x^1 \ldots +b_d\cdot x^d$$
-These basis functions become extra variables used to predict, though each of them are often "hidden" behind the overly bland "basis function" 
+$$f(x) = b_0 + b_1\cdot x^1 \ldots +b_d\cdot x^d$$ These basis functions become extra variables used to predict, though each of them are often "hidden" behind the overly bland "basis function"
 
+## Penalized estimation
 
-## Penalized estimation 
+-   One concern is that we overfit our data and make our lines too wiggly. We can overcome this via penalized estimation, basically balancing minimizing residuals with out of sample prediction.
 
-- One concern is that we overfit our data and make our lines too wiggly. We can overcome this via penalized estimation, basically balancing minimizing residuals with out of sample prediction. 
+-   This is what is used in lasso or ridge regression or many other machine learning algorithms.
 
-- This is what is used in lasso or ridge regression or many other machine learning algorithms. 
-
-- A penalization parameter often called lambda uses cross validation to balance over vs under fitting
+-   A penalization parameter often called lambda uses cross validation to balance over vs under fitting
 
 ## Knots and basis function
 
-- The major decision points are 1) the number of knots we want to use (similar to piecewise models) and 2) the basis function. 
+-   The major decision points are 1) the number of knots we want to use (similar to piecewise models) and 2) the basis function.
 
-- A simple basis function is to use a cubic polynomial, but the default of many packages are penalized thin plate regression splines, which work quite well. 
-
-
-
-
+-   A simple basis function is to use a cubic polynomial, but the default of many packages are penalized thin plate regression splines, which work quite well.
