@@ -1307,5 +1307,12 @@
     "title": "bends",
     "section": "Non-linear models",
     "text": "Non-linear models\nStandard GLM can be written this way, which reflects a linear combination \\[ \\eta_n = \\sum_{i = 1}^K b_i x_{ni}\\]\nNonlinear models cannot, such as: \\[\\eta_n = b_1 \\exp(b_2 x_n)\\]\n\nMany nonlinear functions exist, and can be used in standard regression. We can of course take these functions and apply them to longitudinal data."
+  },
+  {
+    "objectID": "hw2.html",
+    "href": "hw2.html",
+    "title": "hw2",
+    "section": "",
+    "text": "Answer the questions below using same dataset from homework 1. Turn in via email to j.jackson@wustl.edu. Due 3/17\n\nChoose one of the Big Five traits and run a growth model in SEM where the indicators are manifest. Interpret the intercept and the variance terms\nTry a new time coding: Use a time coding that defines the intercept as the final time point, and one that quantifies the slope estimate as the time across the entire study period. How does this differ form the previous model – what is the same/different?\nRun a latent basis coding where you allow the data to inform how time should be coded. Describe how this differs from the initial latent growth curve model.\nRun an MLM growth curve. How is the SEM model from #1 different than the MLM? The same? Run another model with constraints on the SEM model to more closely mimic the MLM model.\nPlot the growth curve from an SEM model of your choosing\nTest whether Measurement Invariance (MI) holds for a construct of your choosing. First try each item as an indicator. Then try parcels where you combine items together to get 3 indicators. Do the parcels improve the fit compared to the non-parceled model?\nImpose MI and run a second order growth curve model. How does this model differ from models where the repeated measure is manifest (estimates, fit statistics, etcetera)?"
   }
 ]
