@@ -1271,7 +1271,7 @@
     "href": "bends-4.html#simplified-gam",
     "title": "bends",
     "section": "Simplified GAM",
-    "text": "Simplified GAM\n\\[y = f(x) + \\epsilon\\]\nchoosing a basis, which in technical terms means choosing a space of functions for which (f) is some element of it.\n\\[y = f(x) + \\epsilon = \\sum_{j=1}^{d}F_j(x)\\beta_j + \\epsilon\\] Above, each Fj is a basis function that is the transformed x depending on the type of basis considered, and the b are the corresponding regression coefficients."
+    "text": "Simplified GAM\n\\[y = f(x) + \\epsilon\\]\nchoosing a basis, which in technical terms means choosing a space of functions for which (f) is some element of it.\n\\[y = f(x) + \\epsilon = \\sum_{j=1}^{d}F_j(x)\\beta_j + \\epsilon\\] Each Fj is a basis function that is the transformed x depending on the type of basis considered, and the b are the corresponding regression coefficients."
   },
   {
     "objectID": "bends-4.html#penalized-estimation",
@@ -1314,5 +1314,40 @@
     "title": "hw2",
     "section": "",
     "text": "Answer the questions below using same dataset from homework 1. Turn in via email to j.jackson@wustl.edu. Due 3/17\n\nChoose one of the Big Five traits and run a growth model in SEM where the indicators are manifest. Interpret the intercept and the variance terms\nTry a new time coding: Use a time coding that defines the intercept as the final time point, and one that quantifies the slope estimate as the time across the entire study period. How does this differ form the previous model – what is the same/different?\nRun a latent basis coding where you allow the data to inform how time should be coded. Describe how this differs from the initial latent growth curve model.\nRun an MLM growth curve. How is the SEM model from #1 different than the MLM? The same? Run another model with constraints on the SEM model to more closely mimic the MLM model.\nPlot the growth curve from an SEM model of your choosing\nTest whether Measurement Invariance (MI) holds for a construct of your choosing. First try each item as an indicator. Then try parcels where you combine items together to get 3 indicators. Do the parcels improve the fit compared to the non-parceled model?\nImpose MI and run a second order growth curve model. How does this model differ from models where the repeated measure is manifest (estimates, fit statistics, etcetera)?"
+  },
+  {
+    "objectID": "bends-4.html#cherry-blossom-data",
+    "href": "bends-4.html#cherry-blossom-data",
+    "title": "bends",
+    "section": "Cherry blossom data",
+    "text": "Cherry blossom data\n\n\nCode\nlibrary(rethinking)\ndata(cherry_blossoms)\nd &lt;- cherry_blossoms\nrm(cherry_blossoms)\ndetach(package:rethinking, unload = T)\n\nd %&gt;% \n  ggplot(aes(x = year, y = doy)) +\n  geom_point(color = \"#ffb7c5\", alpha = 1/2) +\n  theme_bw() +\n    theme(panel.background = element_rect(fill = \"#4f455c\"),\n        panel.grid = element_blank())"
+  },
+  {
+    "objectID": "bends-4.html#knots",
+    "href": "bends-4.html#knots",
+    "title": "bends",
+    "section": "knots",
+    "text": "knots\nHow wiggly do you want it?\n\n\nCode\nd2 &lt;-\n  d %&gt;% \n  drop_na(doy)\n\nnum_knots &lt;- 15\nknot_list &lt;- quantile(d2$year, probs = seq(from = 0, to = 1, length.out = num_knots))\nknot_list\n\n\n       0% 7.142857% 14.28571% 21.42857% 28.57143% 35.71429% 42.85714%       50% \n      812      1036      1174      1269      1377      1454      1518      1583 \n57.14286% 64.28571% 71.42857% 78.57143% 85.71429% 92.85714%      100% \n     1650      1714      1774      1833      1893      1956      2015"
+  },
+  {
+    "objectID": "bends-4.html#linear-basis",
+    "href": "bends-4.html#linear-basis",
+    "title": "bends",
+    "section": "Linear basis",
+    "text": "Linear basis\n\nWe will no longer use year as our predictor, instead only focus on the knots.\nThe most simple, is taking the synthetic variable and either turning on or turning off a range across the knots."
+  },
+  {
+    "objectID": "bends-4.html#estimation",
+    "href": "bends-4.html#estimation",
+    "title": "bends",
+    "section": "estimation",
+    "text": "estimation\n\nspline &lt;- \n  brm(data = d3,\n      family = gaussian,\n      doy ~ 1 + B,\n      prior = c(prior(normal(100, 10), class = Intercept),\n                prior(normal(0, 10), class = b),\n                prior(exponential(1), class = sigma)),\n      iter = 2000, warmup = 1000, chains = 4, cores = 4,\n      seed = 4,\n      backend = \"cmdstanr\",\n      file = \"spline\")"
+  },
+  {
+    "objectID": "bends-4.html#actual-gam-model",
+    "href": "bends-4.html#actual-gam-model",
+    "title": "bends",
+    "section": "actual gam model",
+    "text": "actual gam model\n\nspline2 &lt;-\n  brm(data = d2,\n      family = gaussian,\n      doy ~ 1 + s(year),\n      prior = c(prior(normal(100, 10), class = Intercept),\n                prior(normal(0, 10), class = b),\n                prior(student_t(3, 0, 5.9), class = sds),\n                prior(exponential(1), class = sigma)),\n      iter = 2000, warmup = 1000, chains = 4, cores = 4,\n      seed = 4,\n      control = list(adapt_delta = .99),\n      backend = \"cmdstanr\",\n      file = \"spline2\")"
   }
 ]
