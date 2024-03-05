@@ -10,3 +10,5 @@ editor: visual
 3.  [Longitudinal SEM](sem-3.qmd)
 
 4.  [Bends](bends-4.qmd)
+
+5.  [conditional](conditional-5.qmd)
