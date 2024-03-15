@@ -2,6 +2,11 @@
 title: "Applied Longitudinal Data Analyses"
 ---
 
+3/18. Lecture this week is online. https://wustl.zoom.us/rec/share/q6eH2D5jMhbaLe040ZQ5Hkuo8e2tdybx82GmxFF7A27rfiEyqEi_CXdj5SauU22o.wDrfGcspbcQyFfaF?startTime=1710440787000
+
+
+2/28 HW #2 is posted. Due 3/17
+
 1/31: HW #1 is posted. Due 2/14.
 
 1/17: Welcome to the first day of class! If you want to follow along with examples, head over to github for all of the code and data. https://github.com/josh-jackson/alda24
